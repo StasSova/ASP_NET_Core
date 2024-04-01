@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Weather APP</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="jquery-3.7.1.min.js"></script>
+    <!--<script src="JavaScript.js"></script>-->
+</head>
+<body>
+    <header>
+        <h1>current weather</h1>
+        <div id="search">
+            <input id="search" type="text" placeholder="Search" />
+            <button id="search_btn" type="button"></button>
+        </div>
+    </header>
+    <main>
+        <section id="cur_day_sect">
+            <div class="sect-title">
+                <p>Kiev</p>
+                <p>05.03.2020</p>
+            </div>
+            <div class="info">
+                <div class="icon-block">
+                    <p class="sec-text">Sunny</p>
+                    <img src="https://cdn-icons-png.flaticon.com/128/4814/4814268.png" alt="weather" />
+                </div>
+                <div class="temp-block">
+                    <p><span id="temp-value">18</span> °C</p>
+                </div>
+                <div class="add-info">
+                    <p>Min temperature</p>
+                    <p> <span id="min-temp">16</span> °C</p>
+
+                    <p>Max temperature</p>
+                    <p> <span id="max-temp">16</span> °C</p>
+
+                    <p>Wind speed (km/h)</p>
+                    <p id="wind-speed"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="horly_sect">
+            <div class="sect-title">
+                <p class="primary-text">Hourly</p>
+                <p class="primary-text"></p>
+            </div>
+            <div class="info">
+                <div class="data">
+                    <p id="weekday" class="sec-text">Sunday</p>
+                    <div><!--image--></div>
+                    <p>Forecast</p>
+                    <p>Temp(°C)</p>
+                    <p>Wind (km/h)</p>
+                </div>
+                <div class="items" id="data">
+                    <div class="weather-item">
+                        <p class="sec-text">7:00</p>
+                        <img src="https://cdn-icons-png.flaticon.com/128/4814/4814268.png" alt="weather" />
+                        <p>Sunnt</p>
+                        <p>18</p>
+                        <p>2</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="error_sect">
+            <p id="error-code">404</p>
+            <p id="error-text">not found</p>
+            <p id="error-help">Please enter a different city</p>
+        </section>
+    </main>
+    <footer>
+    </footer>
+
+    <script>
+        const USER_KEY = "d8a7a1d27b31b6a549d9cb4ea99dd396";
+        const iconUrls = {
+            "01d": "https://openweathermap.org/img/wn/01d.png",
+            "01n": "https://openweathermap.org/img/wn/01n.png",
+            "02d": "https://openweathermap.org/img/wn/02d.png",
+            "02n": "https://openweathermap.org/img/wn/02n.png",
+            "03d": "https://openweathermap.org/img/wn/03d.png",
+            "03n": "https://openweathermap.org/img/wn/03n.png",
+            "04d": "https://openweathermap.org/img/wn/04d.png",
+            "04n": "https://openweathermap.org/img/wn/04n.png",
+            "09d": "https://openweathermap.org/img/wn/09d.png",
+            "09n": "https://openweathermap.org/img/wn/09n.png",
+            "10d": "https://openweathermap.org/img/wn/10d.png",
+            "10n": "https://openweathermap.org/img/wn/10n.png",
+            "11d": "https://openweathermap.org/img/wn/11d.png",
+            "11n": "https://openweathermap.org/img/wn/11n.png",
+            "13d": "https://openweathermap.org/img/wn/13d.png",
+            "13n": "https://openweathermap.org/img/wn/13n.png",
+            "50d": "https://openweathermap.org/img/wn/50d.png",
+            "50n": "https://openweathermap.org/img/wn/50n.png"
+        };
+        class WeatherService {
+            static async getCurrentWeather(city) {
+                try {
+                    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${USER_KEY}&units=metric`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch current weather data.");
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (ex) {
+                    console.error(ex);
+                    return null;
+                }
+            }
+
+            static async getHourlyForecast(city) {
+                try {
+                    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${USER_KEY}&units=metric`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch hourly forecast data.");
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (ex) {
+                    console.error(ex);
+                    return null;
+                }
+            }
+        }
+
+        $(document).ready(async function () {
+            // Указатели на переменные
+            const cur_sect = $("#cur_day_sect");
+            const horly_sect = $("#horly_sect");
+            const error_sect = $("#error_sect");
+
+            const cityTitle = $("#cur_day_sect .sect-title p").first();
+            const dateTitle = $("#cur_day_sect .sect-title p").last();
+            const date = $("#cur_day_sect .sect-title p").last();
+            const weatherDescr = $("#cur_day_sect .icon-block p");
+            const weatherIcon = $("#cur_day_sect .icon-block img");
+            const temperature = $("#temp-value");
+            const minTemperature = $("#min-temp");
+            const maxTemperature = $("#max-temp");
+            const windSpeed = $("#wind-speed");
+            const hourlySection = $("#horly_sect .items");
+
+            const weekday = $("#weekday");
+
+            // Скрываем все элементы
+            cur_sect.hide();
+            horly_sect.hide();
+            error_sect.hide();
+
+            // Метод для добавления нового элемента
+            function addWeatherItem(time, icon, description, temperature, windSpeed) {
+                var newItem = $('<div class="weather-item">' +
+                    '<p class="sec-text">' + time + '</p>' +
+                    '<img src="' + icon + '" alt="' + description + '" />' +
+                    '<p>' + description + '</p>' +
+                    '<p>' + temperature + '</p>' +
+                    '<p>' + windSpeed + '</p>' +
+                    '</div>');
+                hourlySection.append(newItem);
+            }
+
+            // Обработчик события для кнопки поиска погоды
+            $("#search_btn").on("click", async function () {
+                var city = $("#search input").val();
+                if (city) {
+                    var weatherData = await WeatherService.getCurrentWeather(city);
+                    if (weatherData) {
+                        const weatherObject = {
+                            cityName: weatherData.name,
+                            timestamp: new Date(weatherData.dt * 1000).toLocaleDateString(),
+                            currentTemp: weatherData.main.temp,
+                            minTemp: weatherData.main.temp_min,
+                            maxTemp: weatherData.main.temp_max,
+                            weatherIcon: weatherData.weather[0].icon,
+                            weatherDescr: weatherData.weather[0].main,
+                            windSpeed: weatherData.wind.speed
+                        };
+                        dateTitle.text(weatherObject.timestamp);
+                        cityTitle.text(weatherObject.cityName);
+                        weatherDescr.text(weatherObject.weatherDescr);
+                        weatherIcon.attr("src", iconUrls[weatherObject.weatherIcon]);
+                        temperature.text(weatherObject.currentTemp);
+                        minTemperature.text(weatherObject.minTemp);
+                        maxTemperature.text(weatherObject.maxTemp);
+                        windSpeed.text(weatherObject.windSpeed);
+
+
+                        const currentDate = new Date();
+                        const options = { weekday: 'long' };
+                        const formattedDate = currentDate.toLocaleDateString('en-US', options);
+                        weekday.text(formattedDate);
+                        cur_sect.show();
+                        error_sect.hide(); // Скрываем блок с ошибкой
+
+
+                        var hourlyData = await WeatherService.getHourlyForecast(city);
+                        if (hourlyData) {
+                            console.log(hourlyData);
+                            // Очищаем предыдущие данные о погоде
+                            hourlySection.empty();
+                            // Показываем секции с информацией о погоде
+                            horly_sect.show();
+
+                            // Добавляем элементы погоды в коллекцию
+                            for (let i = 0, j = 0; j < 5; i += 1, j++) {
+                                const weatherItem = hourlyData.list[i];
+
+                                const time = new Date(weatherItem.dt * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                const icon = iconUrls[weatherItem.weather[0].icon];
+                                const description = weatherItem.weather[0].description;
+                                const temperature = weatherItem.main.temp;
+                                const windSpeed = weatherItem.wind.speed;
+
+                                addWeatherItem(time, icon, description, temperature, windSpeed);
+                            }
+                        }
+
+
+
+                    } else {
+                        // Показываем блок с ошибкой
+                        error_sect.show();
+                    }
+                } else {
+                    // Показываем блок с ошибкой, если поле ввода пустое
+                    error_sect.show();
+                }
+
+            });
+        });
+    </script>
+</body>
+</html>

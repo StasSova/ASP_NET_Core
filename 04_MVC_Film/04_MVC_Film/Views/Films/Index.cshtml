@@ -1,0 +1,29 @@
+﻿@model IEnumerable<_04_MVC_Film.Models.Film>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Film List</h1>
+
+<div class="container">
+    @foreach (var film in Model)
+    {
+        <div class="film-container">
+            <img class="film-image" src="@film.ImageUrl" alt="@film.Name" />
+            <div class="film-details">
+                <h2>@film.Name</h2>
+                <p><strong>Year:</strong> @film.Year</p>
+                <p><strong>Director:</strong> @film.Director.Name</p>
+                <p><strong>Genre:</strong> @film.Genre.Name</p>
+                <p>@film.Description</p>
+                <p>
+                    <a asp-action="Edit" asp-route-id="@film.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@film.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@film.Id">Delete</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>

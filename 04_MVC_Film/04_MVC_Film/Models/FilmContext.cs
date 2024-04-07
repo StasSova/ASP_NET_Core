@@ -11,7 +11,7 @@ public class FilmContext : DbContext
     public FilmContext(DbContextOptions<FilmContext> options)
            : base(options)
     {
-        Database.EnsureDeleted();
+        //Database.EnsureDeleted();
         if (Database.EnsureCreated())
         {
             var director1 = new Director { Name = "Quentin Tarantino" };
@@ -35,5 +35,32 @@ public class FilmContext : DbContext
             SaveChanges();
         }
     }
+
+    public void DetachFilm(Film film)
+    {
+        Entry(film).State = EntityState.Detached;
+    }
+
+    //public async Task<bool> Update<T>(int id, T entity) where T : DbEntity
+    //{
+    //    try
+    //    {
+    //        T? _entity = await this.Set<T>().FindAsync(id);
+    //        if (_entity == null) return false;
+
+    //        // Обновляем значения _entity новыми значениями из entity
+    //        this.Entry(_entity).CurrentValues.SetValues(entity);
+
+    //        // Сохраняем изменения
+    //        await this.SaveChangesAsync();
+
+    //        return true;
+    //    }
+    //    catch (Exception)
+    //    {
+    //        //Console.WriteLine($"An error occurred while updating entity: {ex.Message}");
+    //        return false;
+    //    }
+    //}
 
 }

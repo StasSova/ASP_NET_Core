@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _04_MVC_Film.Models;
+using System.Threading;
 
 namespace _04_MVC_Film.Controllers
 {
     public class FilmsController : Controller
     {
         private readonly FilmContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public FilmsController(FilmContext context)
+        public FilmsController(FilmContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: Films
@@ -58,10 +61,20 @@ namespace _04_MVC_Film.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Year,DirectorId,GenreId,ImageUrl,Description")] Film film)
+        public async Task<IActionResult> Create([Bind("Id,Name,Year,DirectorId,GenreId,Description")] Film film, IFormFile newUrl)
         {
-            if (ModelState.IsValid)
+            //ModelState["ImageUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            //ModelState["newUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            if (ModelState.IsValid && newUrl != null)
             {
+                string path = "/img/" + newUrl.FileName;
+                film.ImageUrl = path;
+                using (var fileStream = new FileStream(_environment.WebRootPath + path, FileMode.Create))
+                {
+                    await newUrl.CopyToAsync(fileStream);
+                }
+
+
                 _context.Add(film);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -94,21 +107,39 @@ namespace _04_MVC_Film.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year,DirectorId,GenreId,Description")] Film film, IFormFile ImageUrl)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year,ImageUrl,DirectorId,GenreId,Description")] Film film, IFormFile newUrl)
         {
             if (id != film.Id)
             {
                 return NotFound();
             }
 
+            if (newUrl != null)
+            {
+                string path = "/img/" + newUrl.FileName;
+                film.ImageUrl = path;
+                using (var fileStream = new FileStream(_environment.WebRootPath + path, FileMode.Create))
+                {
+                    await newUrl.CopyToAsync(fileStream);
+                }
+            }
+
+            ModelState["ImageUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            ModelState["newUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Filename = 5.jpeg
-                    if (ImageUrl != null)
-                        film.ImageUrl = string.Concat("/img/", ImageUrl.FileName);
-                    _context.Update(film);
+                    var f = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
+                    if (f == null)
+                        return NotFound();
+                    f.Name = film.Name;
+                    f.Description = film.Description;
+                    f.GenreId = film.GenreId;
+                    f.DirectorId = film.DirectorId;
+                    f.ImageUrl = film.ImageUrl;
+                    f.Year = film.Year;
+                    _context.Update(f);// Стандартный метод
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

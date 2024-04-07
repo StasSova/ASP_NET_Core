@@ -10,8 +10,8 @@
 <h4>Film</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -25,27 +25,37 @@
             </div>
             <div class="form-group">
                 <label asp-for="DirectorId" class="control-label"></label>
-                <select asp-for="DirectorId" class ="form-control" asp-items="ViewBag.DirectorId"></select>
+                <select asp-for="DirectorId" class="form-control" asp-items="ViewBag.DirectorId"></select>
+                <span asp-validation-for="DirectorId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GenreId" class="control-label"></label>
-                <select asp-for="GenreId" class ="form-control" asp-items="ViewBag.GenreId"></select>
+                <select asp-for="GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
+                <span asp-validation-for="GenreId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label class="control-label"></label>
+                <input type="file" name="newUrl" id="ImageUrl" onchange="previewImage()" />
+                <span class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+            <input type="hidden" asp-for="ImageUrl" />
+
         </form>
     </div>
+    <div class="col-md-6">
+        <img id="preview" src="" alt="Preview" style="max-width: 100%; max-height: 100%;" />
+    </div>
+
 </div>
 
 <div>
@@ -53,5 +63,24 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage() {
+            var preview = document.getElementById('preview');
+            var file = document.getElementById('ImageUrl').files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+            }
+        }
+    </script>
 }

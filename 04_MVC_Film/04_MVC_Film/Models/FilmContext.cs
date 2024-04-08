@@ -41,26 +41,26 @@ public class FilmContext : DbContext
         Entry(film).State = EntityState.Detached;
     }
 
-    //public async Task<bool> Update<T>(int id, T entity) where T : DbEntity
-    //{
-    //    try
-    //    {
-    //        T? _entity = await this.Set<T>().FindAsync(id);
-    //        if (_entity == null) return false;
+    public async Task<bool> Update<T>(int id, T entity) where T : DbEntity
+    {
+        try
+        {
+            T? _entity = await this.Set<T>().FindAsync(id);
+            if (_entity == null) return false;
 
-    //        // Обновляем значения _entity новыми значениями из entity
-    //        this.Entry(_entity).CurrentValues.SetValues(entity);
+            // Обновляем значения _entity новыми значениями из entity
+            this.Entry(_entity).CurrentValues.SetValues(entity);
 
-    //        // Сохраняем изменения
-    //        await this.SaveChangesAsync();
+            // Сохраняем изменения
+            await this.SaveChangesAsync();
 
-    //        return true;
-    //    }
-    //    catch (Exception)
-    //    {
-    //        //Console.WriteLine($"An error occurred while updating entity: {ex.Message}");
-    //        return false;
-    //    }
-    //}
+            return true;
+        }
+        catch (Exception)
+        {
+            //Console.WriteLine($"An error occurred while updating entity: {ex.Message}");
+            return false;
+        }
+    }
 
 }

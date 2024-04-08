@@ -63,8 +63,10 @@ namespace _04_MVC_Film.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Year,DirectorId,GenreId,Description")] Film film, IFormFile newUrl)
         {
-            //ModelState["ImageUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
-            //ModelState["newUrl"].ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            if (film.Description == "Admin")
+                ModelState.AddModelError("", "admin - запрещенное описание");
+
+
             if (ModelState.IsValid && newUrl != null)
             {
                 string path = "/img/" + newUrl.FileName;
@@ -73,7 +75,6 @@ namespace _04_MVC_Film.Controllers
                 {
                     await newUrl.CopyToAsync(fileStream);
                 }
-
 
                 _context.Add(film);
                 await _context.SaveChangesAsync();
@@ -114,6 +115,9 @@ namespace _04_MVC_Film.Controllers
                 return NotFound();
             }
 
+            if (film.Description == "Admin")
+                ModelState.AddModelError("", "admin - запрещенное описание");
+
             if (newUrl != null)
             {
                 string path = "/img/" + newUrl.FileName;
@@ -130,16 +134,16 @@ namespace _04_MVC_Film.Controllers
             {
                 try
                 {
-                    var f = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
-                    if (f == null)
-                        return NotFound();
-                    f.Name = film.Name;
-                    f.Description = film.Description;
-                    f.GenreId = film.GenreId;
-                    f.DirectorId = film.DirectorId;
-                    f.ImageUrl = film.ImageUrl;
-                    f.Year = film.Year;
-                    _context.Update(f);// Стандартный метод
+                    //var f = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
+                    //if (f == null)
+                    //    return NotFound();
+                    //f.Name = film.Name;
+                    //f.Description = film.Description;
+                    //f.GenreId = film.GenreId;
+                    //f.DirectorId = film.DirectorId;
+                    //f.ImageUrl = film.ImageUrl;
+                    //f.Year = film.Year;
+                    await _context.Update(film.Id, film);// Стандартный метод
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -198,6 +202,14 @@ namespace _04_MVC_Film.Controllers
         private bool FilmExists(int id)
         {
             return _context.Films.Any(e => e.Id == id);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult CheckDescription(string Description)
+        {
+            if (Description.Length < 2)
+                return Json(false);
+            return Json(true);
         }
     }
 }

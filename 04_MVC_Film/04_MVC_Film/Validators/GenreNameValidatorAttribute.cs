@@ -11,6 +11,7 @@ public class GenreNameValidatorAttribute : ValidationAttribute
     {
         if (value == null) return false;
         string? strval = value.ToString();
+
         return !FilmContext.Genres.Any(x => x.Name == strval);
     }
 }

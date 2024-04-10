@@ -1,4 +1,5 @@
 using _05_ViewModel_Session.Models.DataBase;
+using _05_ViewModel_Session.Services.DataBase;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddDbContext<GuestBookContext>(options => options.UseSqlServer(connection));
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

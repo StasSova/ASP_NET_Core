@@ -7,42 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _05_ViewModel_Session.Models.DataBase;
 using _05_ViewModel_Session.Models.ViewModels;
+using _05_ViewModel_Session.Services.DataBase;
+using System.Security.AccessControl;
 
 namespace _05_ViewModel_Session.Controllers
 {
     public class MessagesController : Controller
     {
-        private readonly GuestBookContext _context;
+        private readonly IRepository _rep;
 
-        public MessagesController(GuestBookContext context)
+        public MessagesController(IRepository repository)
         {
-            _context = context;
+            _rep = repository;
         }
         // GET: Messages
         public async Task<IActionResult> Index()
         {
-            var guestBookContext = _context.Messages.Include(m => m.User);
-            return View(await guestBookContext.ToListAsync());
+            return View(await _rep.GetMessages());
         }
 
-        // GET: Messages/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var message = await _context.Messages
-                .Include(m => m.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-
-            return View(message);
-        }
 
         // GET: Messages/Create
         public IActionResult Create()
@@ -60,24 +44,15 @@ namespace _05_ViewModel_Session.Controllers
             if (ModelState.IsValid)
             {
                 int? id = (int?)HttpContext.Session.GetInt32("userId");
-                Message mes = new Message()
-                {
-                    Body = message.Body,
-                    UserId = id ?? 0,
-                    Date = DateTime.Now
-                };
-
-
-                _context.Add(mes);
-                await _context.SaveChangesAsync();
+                await _rep.CreateReview(id ??= 0, message.Body, DateTime.UtcNow);
                 return RedirectToAction(nameof(Index), "Home");
             }
             return View(message);
         }
 
-        private bool MessageExists(int id)
+        private async Task<bool> MessageExists(int id)
         {
-            return _context.Messages.Any(e => e.Id == id);
+            return await _rep.ReviewExists(id);
         }
     }
 }

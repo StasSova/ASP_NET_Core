@@ -10,16 +10,18 @@ using _05_ViewModel_Session.Models.ViewModels;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Security.Cryptography;
 using System.Text;
+using _05_ViewModel_Session.Services.DataBase;
 
 namespace _05_ViewModel_Session.Controllers
 {
     public class UsersController : Controller
     {
         private readonly GuestBookContext _context;
+        private readonly IRepository _rep;
 
-        public UsersController(GuestBookContext context)
+        public UsersController(IRepository repository)
         {
-            _context = context;
+            _rep = repository;
         }
 
         // GET: Users/Create
@@ -38,37 +40,14 @@ namespace _05_ViewModel_Session.Controllers
             if (ModelState.IsValid)
             {
 
-                User newUser = new User()
+                User us = await _rep.CreateUser(user.Name, user.Email, user.Password);
+                if (us == null)
                 {
-                    Email = user.Email,
-                    Name = user.Name,
-                };
+                    return View(user);
+                }
 
-                byte[] saltbuf = new byte[16];
-
-                RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
-                randomNumberGenerator.GetBytes(saltbuf);
-
-                StringBuilder sb = new StringBuilder(16);
-                for (int i = 0; i < 16; i++)
-                    sb.Append(string.Format("{0:X2}", saltbuf[i]));
-                string salt = sb.ToString();
-
-                byte[] password = Encoding.Unicode.GetBytes(salt + user.Password);
-
-                byte[] byteHash = SHA256.HashData(password);
-
-                StringBuilder hash = new StringBuilder(byteHash.Length);
-                for (int i = 0; i < byteHash.Length; i++)
-                    hash.Append(string.Format("{0:X2}", byteHash[i]));
-
-                newUser.Password = hash.ToString();
-                newUser.Salt = salt;
-                _context.Users.Add(newUser);
-                await _context.SaveChangesAsync();
-
-                HttpContext.Session.SetString("login", user.Name);
-                HttpContext.Session.SetInt32("userId", newUser.Id);
+                HttpContext.Session.SetString("login", us.Name);
+                HttpContext.Session.SetInt32("userId", us.Id);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -96,36 +75,20 @@ namespace _05_ViewModel_Session.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_context.Users.Count() == 0)
+                if (await _rep.GetUsersQuantity() == 0)
                 {
                     ModelState.AddModelError("", "Wrong login or password!");
                     return View(user);
                 }
-                var _user = await _context.Users.Where(x => x.Email == user.Email).FirstAsync();
+                var _user = await _rep.LoginUser(user.Email, user.Password);
                 if (_user == null)
                 {
                     ModelState.AddModelError("", "Wrong login or password!");
                     return View(user);
                 }
 
-                //переводим пароль в байт-массив  
-                byte[] password = Encoding.Unicode.GetBytes(_user.Salt + user.Password);
-
-                //вычисляем хеш-представление в байтах  
-                byte[] byteHash = SHA256.HashData(password);
-
-                StringBuilder hash = new StringBuilder(byteHash.Length);
-                for (int i = 0; i < byteHash.Length; i++)
-                    hash.Append(string.Format("{0:X2}", byteHash[i]));
-
-                if (_user.Password != hash.ToString())
-                {
-                    ModelState.AddModelError("", "Wrong login or password!");
-                    return View(user);
-                }
                 HttpContext.Session.SetString("login", _user.Name);
                 HttpContext.Session.SetInt32("userId", _user.Id);
-
 
 
                 return RedirectToAction("Index", "Home");

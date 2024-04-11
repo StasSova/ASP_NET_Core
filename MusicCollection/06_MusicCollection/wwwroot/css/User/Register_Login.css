@@ -1,0 +1,104 @@
+﻿:root {
+    --primary-text-color: #a7a7a7;
+    --d-background-cont-color: #121212;
+}
+
+.registration-container {
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.registration-title {
+    color: white;
+    font-size: 48px;
+    word-wrap: break-word;
+    font-weight: 700;
+    line-height: 68px;
+}
+
+.registration-validation-summary {
+}
+
+
+.btn-login {
+    border-radius: 24px;
+    background-color: #17ac4d;
+    height: 48px;
+    margin: 12px 0 0 0;
+}
+
+    .btn-login:hover {
+        background-color: #1fdf64;
+    }
+
+.registration-separator {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin: 24px 0;
+}
+
+    .registration-separator hr {
+        color: gray;
+        width: 100%;
+    }
+
+    .registration-separator p {
+        margin: 0;
+        padding: 0;
+    }
+
+.fast-registration {
+}
+
+.registration-fast-button {
+    width: 100%;
+    height: 48px;
+    background-color: transparent;
+    border: 1px solid gray;
+    border-radius: 24px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+    .registration-fast-button:hover {
+        border: 1px solid white;
+    }
+
+    .registration-fast-button .btn-icon {
+        width: 24px;
+        height: 24px;
+        margin: 0 0 0 8px;
+    }
+
+    .registration-fast-button span {
+        font-size: 24px;
+        flex: 0.8;
+    }
+
+.apple-button .btn-icon {
+    margin-bottom: 8px;
+}
+
+/*.google-button .btn-icon {
+    margin: 0 0 0 8px;
+}*/
+
+.registration-exist-account {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+}
+
+    .registration-exist-account a {
+        text-decoration: underline !important;
+        cursor: pointer;
+    }

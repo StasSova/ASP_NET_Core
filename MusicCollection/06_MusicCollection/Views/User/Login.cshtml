@@ -1,4 +1,4 @@
-﻿@model _06_MusicCollection.Models.ViewModel.VM_User_Login
+﻿@model _06_MusicCollection.Models.ViewModel.User.VM_User_Login
 <link href="~/css//User//Register_Login.css" rel="stylesheet" />
 
 @{
@@ -23,7 +23,7 @@
 
         <div class="mb-3">
             <label asp-for="Password" class="form-label"></label>
-            <input asp-for="Password" class="form-control bg-dark text-light" placeholder="*********" />
+            <input asp-for="Password" class="form-control bg-dark text-light" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 

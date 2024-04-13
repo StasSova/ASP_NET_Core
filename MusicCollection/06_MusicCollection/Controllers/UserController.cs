@@ -1,57 +1,101 @@
-﻿using _06_MusicCollection.Models.ViewModel;
+﻿using _06_MusicCollection.Models.ViewModel.User;
+using _06_MusicCollection.Services.DataBaseService.User;
+using _06_MusicCollection.Services.PasswordService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace _06_MusicCollection.Controllers
+public class UserController : Controller
 {
-    public class UserController : Controller
+    private readonly IAuthenticationService _authenticationService;
+    public UserController(IAuthenticationService authenticationService)
     {
-        // ADMIN
-        public IActionResult Index()
-        {
-            // вывод всех пользователей
-            return View();
-        }
+        _authenticationService = authenticationService;
+    }
 
+    // GET: User/Register
+    public IActionResult Register()
+    {
+        return View();
+    }
 
-        // GET: User/Register
-        public IActionResult Register()
+    // POST: User/Register
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register([Bind("Email, Password, PasswordRepeat")] VM_User_Register user)
+    {
+        if (ModelState.IsValid)
         {
+            //Регистрация нового пользователя
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
 
-            return View();
-        }
-        // POST: User/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("Email, Password, PasswordRepeat")] VM_User_Register user)
-        {
-            if (ModelState.IsValid)
+            if (result != null)
             {
-                // добавить контроллер для добавления
-
-                //return RedirectToAction(nameof(Index));
+                // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Пользователь с таким email уже существует");
                 return View(user);
             }
-            return View(user);
         }
+        // если админ
+        else if (user.Email == "admin" && ModelState["Password"]?.ValidationState == ModelValidationState.Valid)
+        {
+            //Регистрация нового пользователя администратора
+            //Если есть уже такой email будет null
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
 
-        // GET: User/Register
-        public IActionResult Login()
-        {
-            return View();
-        }
-        // POST: User/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("Email, Password")] VM_User_Login user)
-        {
-            if (ModelState.IsValid)
+            if (result != null)
             {
-                // добавить контроллер для добавления
+                // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        return View(user);
+    }
 
-                //return RedirectToAction(nameof(Index));
+    // GET: User/Login
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    // POST: User/Login
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login([Bind("Email, Password")] VM_User_Login user)
+    {
+        if (ModelState.IsValid)
+        {
+            // Проверка входа пользователя
+            var result = await _authenticationService.AuthenticateUserAsync(user.Email, user.Password);
+
+            if (result != null)
+            {
+                // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Неправильный email или пароль");
                 return View(user);
             }
-            return View(user);
         }
+        // если админ
+        else if (user.Email == "admin")
+        {
+            //Авторизация пользователя администратора
+            //Если есть уже такой email будет null
+            var result = await _authenticationService.AuthenticateUserAsync(user.Email, user.Password);
+
+            if (result != null)
+            {
+                // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        ModelState.AddModelError(string.Empty, "Неправильный email или пароль");
+        return View(user);
     }
 }

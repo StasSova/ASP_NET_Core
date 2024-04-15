@@ -6,5 +6,7 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public string Salt { get; set; }
+        public ICollection<M_Song> UploadedSongs { get; set; }
+        public ICollection<M_Album> Albums { get; set; }
     }
 }

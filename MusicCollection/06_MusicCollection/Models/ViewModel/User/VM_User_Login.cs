@@ -7,7 +7,7 @@ namespace _06_MusicCollection.Models.ViewModel.User
     {
         [Required(ErrorMessage = "Адрес электронной почты недействителен. Убедитесь, что он указан в таком формате: example@email.com.")]
         [Display(Name = "Электронная почта")]
-        [RegularExpression("^(admin|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}))$\r\n",
+        [RegularExpression(@"^(admin|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))$",
             ErrorMessage = "Адрес электронной почты недействителен. Убедитесь, что он указан в таком формате: example@email.com.")]
         public string Email { get; set; }
 

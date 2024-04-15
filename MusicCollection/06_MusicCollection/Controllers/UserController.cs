@@ -31,6 +31,7 @@ public class UserController : Controller
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                HttpContext.Session.SetString("email", user.Email);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -49,6 +50,8 @@ public class UserController : Controller
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                HttpContext.Session.SetString("email", user.Email);
+                HttpContext.Session.SetString("admin", user.Email);
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -74,6 +77,7 @@ public class UserController : Controller
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                HttpContext.Session.SetString("email", user.Email);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -97,5 +101,11 @@ public class UserController : Controller
         }
         ModelState.AddModelError(string.Empty, "Неправильный email или пароль");
         return View(user);
+    }
+    // GET: User/Logout
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Register", "User");
     }
 }

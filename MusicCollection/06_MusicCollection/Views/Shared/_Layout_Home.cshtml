@@ -95,10 +95,57 @@
 
 
         </nav>
+        <div class="main-cont">
+            <header>
+                <div class="page-nav">
+                </div>
+                <div class="auth">
+                    <a class="button transp" asp-action="Login" asp-controller="User">Sign up</a>
+                    <a class="button white" asp-action="Register" asp-controller="User">Log in</a>
+                </div>
+            </header>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+            <footer>
+                <div class="foot-block">
+                    <p class="foot-tilte">Compnay</p>
+                    <ul>
+                        <li>About</li>
+                        <li>Jobs</li>
+                        <li>For the Record</li>
+                    </ul>
+                </div>
 
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+                <div class="foot-block">
+                    <p class="foot-tilte">Communities</p>
+                    <ul>
+                        <li>For Artists</li>
+                        <li>Developers</li>
+                        <li>Advertising</li>
+                        <li>Investors</li>
+                        <li>Vendors</li>
+                    </ul>
+                </div>
+                <div class="foot-block">
+                    <p class="foot-tilte">Useful links</p>
+                    <ul>
+                        <li>Support</li>
+                        <li>Free Mobile App</li>
+                    </ul>
+                </div>
+                <div class="foot-block">
+                    <p class="foot-tilte">Spotify Plans</p>
+                    <ul>
+                        <li>Premium Individual</li>
+                        <li>Premium Duo</li>
+                        <li>Premium Family</li>
+                        <li>Premium Student</li>
+                        <li>Spotify Free</li>
+                    </ul>
+                </div>
+            </footer>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

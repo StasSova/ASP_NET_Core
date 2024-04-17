@@ -1,11 +1,14 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace _06_MusicCollection.Services.PasswordService
+namespace MusicCollection_BLL.Interfaces.Password
 {
-    public class PasswordHashingService : IPasswordHashingService
+    public class PasswordHashing : IPasswordHashing
     {
-        public PasswordHashingService() { }
         // Метод для создания хэша пароля
         public async Task<(string hashedPassword, string salt)> HashPasswordAsync(string userPassword)
         {

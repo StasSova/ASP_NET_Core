@@ -1,13 +1,12 @@
 ﻿using _06_MusicCollection.Models.ViewModel.User;
-using _06_MusicCollection.Services.DataBaseService.User;
-using _06_MusicCollection.Services.PasswordService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MusicCollection_BLL.Interfaces.User;
 
 public class UserController : Controller
 {
-    private readonly IAuthenticationService _authenticationService;
-    public UserController(IAuthenticationService authenticationService)
+    private readonly IUserAuthentication _authenticationService;
+    public UserController(IUserAuthentication authenticationService)
     {
         _authenticationService = authenticationService;
     }
@@ -25,8 +24,11 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
+
+            // TODO
+
             //Регистрация нового пользователя
-            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password, 0);
 
             if (result != null)
             {
@@ -45,7 +47,7 @@ public class UserController : Controller
         {
             //Регистрация нового пользователя администратора
             //Если есть уже такой email будет null
-            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password, 1);
 
             if (result != null)
             {

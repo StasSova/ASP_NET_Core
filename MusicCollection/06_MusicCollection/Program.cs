@@ -1,17 +1,15 @@
-using _06_MusicCollection.DataBase;
-using _06_MusicCollection.Services.DataBaseService.User;
-using _06_MusicCollection.Services.PasswordService;
 using Microsoft.EntityFrameworkCore;
+using MusicCollection_BLL.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<SpotifyContext>(options => options.UseSqlServer(connection));
 
-builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddSpotifyContext(connection);
+builder.Services.AddUserAuthentication();
+builder.Services.AddPasswordHashing();
 
 
 

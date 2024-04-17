@@ -1,19 +1,20 @@
-﻿using _06_MusicCollection.DataBase.Models;
+﻿using MusicCollection_DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace _06_MusicCollection.DataBase;
-
+namespace MusicCollection_DAL;
 public class SpotifyContext : DbContext
 {
     public SpotifyContext(DbContextOptions<SpotifyContext> options) : base(options)
     {
+
     }
     public DbSet<M_Album> Albums { get; set; }
-    public DbSet<M_Author> Authors { get; set; }
+    public DbSet<M_Artist> Artists { get; set; }
     public DbSet<M_Genre> Genres { get; set; }
     public DbSet<M_Song> Songs { get; set; }
     public DbSet<M_User> Users { get; set; }
+    public DbSet<M_UserStatus> Statuses { get; set; }
 }
 
 
@@ -42,9 +43,42 @@ public class GenreConfiguration : IEntityTypeConfiguration<M_Genre>
                     new M_Genre { BackgroundColor = "#d84000", Name = "chill", Poster = "chill_poster.jpg" }
                 );
     }
-
 }
+public class AuthorConfiguration : IEntityTypeConfiguration<M_Artist>
+{
 
+    public void Configure(EntityTypeBuilder<M_Artist> builder)
+    {
+        builder.HasData(
+            new M_Artist { Name = "David Kushner" },
+            new M_Artist { Name = "YAKTAK" },
+            new M_Artist { Name = "MiyaGi" },
+            new M_Artist { Name = "Endspiel" },
+            new M_Artist { Name = "Artem Pivovarov" }
+        );
+    }
+}
+public class AlbumConfiguration : IEntityTypeConfiguration<M_Album>
+{
+    public void Configure(EntityTypeBuilder<M_Album> builder)
+    {
+        builder.HasData(
+            new M_Album
+            {
+                Poster = "https://upload.wikimedia.org/wikipedia/en/1/1e/David_Kushner-_Daylight.png",
+                Title = "Daylight",
+                Artists = new List<M_Artist>()
+                {
+
+                },
+                Songs = new List<M_Song>()
+                {
+
+                }
+            }
+        );
+    }
+}
 public class SongConfiguration : IEntityTypeConfiguration<M_Song>
 {
     public void Configure(EntityTypeBuilder<M_Song> builder)
@@ -57,22 +91,10 @@ public class SongConfiguration : IEntityTypeConfiguration<M_Song>
                 Poster = "bohemian_rhapsody_poster.jpg",
                 FilePath = "bohemian_rhapsody.mp3",
                 Duration = TimeSpan.FromMinutes(6),
-                UploadDate = DateTime.Now,
+                UploadDate = new DateOnly(),
                 Likes = 1000,
                 Plays = 5000,
                 Downloads = 2000,
-            },
-            new M_Song
-            {
-                Id = 2,
-                Title = "Shape of You",
-                Poster = "shape_of_you_poster.jpg",
-                FilePath = "shape_of_you.mp3",
-                Duration = TimeSpan.FromMinutes(4),
-                UploadDate = DateTime.Now,
-                Likes = 1200,
-                Plays = 6000,
-                Downloads = 2500,
             }
             // Добавьте другие песни по мере необходимости
         );

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06_MusicCollection", "06_MusicCollection\06_MusicCollection.csproj", "{B029861A-2E5A-4CAC-BADF-449A0F09032A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "06_MusicCollection", "06_MusicCollection\06_MusicCollection.csproj", "{B029861A-2E5A-4CAC-BADF-449A0F09032A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicCollection_DAL", "MusicCollection_DAL\MusicCollection_DAL.csproj", "{60A95CE7-F55F-44AD-8C4F-4E3C7E6F87CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicCollection_BLL", "MusicCollection_BLL\MusicCollection_BLL.csproj", "{6832ED61-0C16-434F-8226-16CFA316AB8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{B029861A-2E5A-4CAC-BADF-449A0F09032A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B029861A-2E5A-4CAC-BADF-449A0F09032A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B029861A-2E5A-4CAC-BADF-449A0F09032A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60A95CE7-F55F-44AD-8C4F-4E3C7E6F87CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60A95CE7-F55F-44AD-8C4F-4E3C7E6F87CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60A95CE7-F55F-44AD-8C4F-4E3C7E6F87CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60A95CE7-F55F-44AD-8C4F-4E3C7E6F87CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6832ED61-0C16-434F-8226-16CFA316AB8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6832ED61-0C16-434F-8226-16CFA316AB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6832ED61-0C16-434F-8226-16CFA316AB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6832ED61-0C16-434F-8226-16CFA316AB8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

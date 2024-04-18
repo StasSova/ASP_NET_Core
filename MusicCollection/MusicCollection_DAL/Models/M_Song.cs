@@ -9,9 +9,9 @@
         public int Likes { get; set; } = 0;
         public int Plays { get; set; } = 0;
         public int Downloads { get; set; } = 0;
-        public ICollection<M_Genre>? Genres { get; set; }
-        public ICollection<M_Artist>? Artists { get; set; }
+        public virtual ICollection<M_Genre>? Genres { get; set; }
+        public virtual ICollection<M_Artist>? Artists { get; set; }
         public int AlbumId { get; set; }
-        public M_Album? Album { get; set; }
+        public virtual M_Album? Album { get; set; }
     }
 }

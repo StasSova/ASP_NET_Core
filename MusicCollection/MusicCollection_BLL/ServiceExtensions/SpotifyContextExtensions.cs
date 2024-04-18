@@ -13,10 +13,7 @@ namespace MusicCollection_BLL.ServiceExtensions
     {
         public static void AddSpotifyContext(this IServiceCollection services, string connection)
         {
-            services.AddDbContext<SpotifyContext>(options =>
-                options.UseSqlServer(connection)
-                       .UseLazyLoadingProxies()
-            );
+            services.AddDbContext<SpotifyContext>(options => options.UseSqlServer(connection).UseLazyLoadingProxies());
         }
     }
 }

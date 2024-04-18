@@ -43,7 +43,7 @@ namespace MusicCollection_BLL.Interfaces.User
             }
             return null;
         }
-        public async Task<T_User?> RegisterUserAsync(string email, string password, int statusId)
+        public async Task<T_User?> RegisterUserAsync(string email, string password)
         {
             try
             {
@@ -52,6 +52,20 @@ namespace MusicCollection_BLL.Interfaces.User
                 if (existingUser == null)
                 {
                     (string hashedPassword, string salt) = await _passwordHashing.HashPasswordAsync(password);
+
+                    int statusId = 0;
+                    if (email == "admin")
+                    {
+                        // админ
+                        var status = await _dbContext.Generic.GetFirstAsync<M_UserStatus, string>("Status", "Administrator");
+                        statusId = status.Id;
+                    }
+                    else
+                    {
+                        // обычный
+                        var status = await _dbContext.Generic.GetFirstAsync<M_UserStatus, string>("Status", "Inactive");
+                        statusId = status.Id;
+                    }
 
                     M_User newUser = new M_User
                     {

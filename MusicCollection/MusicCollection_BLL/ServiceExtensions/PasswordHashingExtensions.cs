@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MusicCollection_BLL.Interfaces.Password;
 using MusicCollection_DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace MusicCollection_BLL.ServiceExtensions
     {
         public static void AddPasswordHashing(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+            services.AddScoped<IPasswordHashing, PasswordHashing>();
         }
     }
 }

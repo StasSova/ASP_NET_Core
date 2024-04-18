@@ -24,16 +24,16 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
-
             // TODO
-
             //Регистрация нового пользователя
-            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password, 0);
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
 
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
-                HttpContext.Session.SetString("email", user.Email);
+                HttpContext.Session.SetString("email", result.Email);
+                HttpContext.Session.SetInt32("userId", result.Id);
+                HttpContext.Session.SetString("status", result.Status);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -47,12 +47,14 @@ public class UserController : Controller
         {
             //Регистрация нового пользователя администратора
             //Если есть уже такой email будет null
-            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password, 1);
+            var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
 
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
-                HttpContext.Session.SetString("email", user.Email);
+                HttpContext.Session.SetString("email", result.Email);
+                HttpContext.Session.SetInt32("userId", result.Id);
+                HttpContext.Session.SetString("status", result.Status);
                 HttpContext.Session.SetString("admin", user.Email);
                 return RedirectToAction("Index", "Home");
             }
@@ -79,7 +81,9 @@ public class UserController : Controller
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
-                HttpContext.Session.SetString("email", user.Email);
+                HttpContext.Session.SetString("email", result.Email);
+                HttpContext.Session.SetInt32("userId", result.Id);
+                HttpContext.Session.SetString("status", result.Status);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -98,6 +102,10 @@ public class UserController : Controller
             if (result != null)
             {
                 // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+                HttpContext.Session.SetString("email", result.Email);
+                HttpContext.Session.SetInt32("userId", result.Id);
+                HttpContext.Session.SetString("status", result.Status);
+
                 return RedirectToAction("Index", "Home");
             }
         }

@@ -7,11 +7,11 @@
         public string Password { get; set; }
         public string Salt { get; set; }
         public int StatusId { get; set; }
-        public M_UserStatus? Status { get; set; }
-        public ICollection<M_Song>? UploadedSongs { get; set; }
-        public ICollection<M_Album>? UploadedAlbums { get; set; }
-        public ICollection<M_Genre>? UploadedGenres { get; set; }
-        public ICollection<M_Artist>? UploadedArtists { get; set; }
-        public ICollection<M_UserStatus> UploadedStatuses { get; set; }
+        public virtual M_UserStatus? Status { get; set; }
+        public virtual ICollection<M_Song>? UploadedSongs { get; set; }
+        public virtual ICollection<M_Album>? UploadedAlbums { get; set; }
+        public virtual ICollection<M_Genre>? UploadedGenres { get; set; }
+        public virtual ICollection<M_Artist>? UploadedArtists { get; set; }
+        public virtual ICollection<M_UserStatus> UploadedStatuses { get; set; }
     }
 }

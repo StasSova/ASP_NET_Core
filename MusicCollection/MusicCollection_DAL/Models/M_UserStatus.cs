@@ -9,6 +9,6 @@ namespace MusicCollection_DAL.Models
     public class M_UserStatus : M_DbEntity
     {
         public required string Status { get; set; }
-        public ICollection<M_User>? Users { get; set; }
+        public virtual ICollection<M_User>? Users { get; set; }
     }
 }

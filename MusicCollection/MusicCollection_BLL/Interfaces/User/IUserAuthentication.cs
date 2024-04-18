@@ -10,6 +10,6 @@ namespace MusicCollection_BLL.Interfaces.User
     public interface IUserAuthentication
     {
         Task<T_User?> AuthenticateUserAsync(string email, string password);
-        Task<T_User?> RegisterUserAsync(string email, string password, int statusId);
+        Task<T_User?> RegisterUserAsync(string email, string password);
     }
 }

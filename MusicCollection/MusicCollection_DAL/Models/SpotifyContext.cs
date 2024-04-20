@@ -1,10 +1,9 @@
-﻿using MusicCollection_DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace MusicCollection_DAL;
+namespace MusicCollection_DAL.Models;
 public class SpotifyContext : DbContext
 {
     public SpotifyContext(DbContextOptions<SpotifyContext> options) : base(options) { }

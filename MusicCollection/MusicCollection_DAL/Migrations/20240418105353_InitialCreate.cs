@@ -363,23 +363,6 @@ namespace MusicCollection_DAL.Migrations
                 columns: new[] { "Title", "Poster", "FilePath", "Duration", "AlbumId", "UploadDate", "DataUpdate" },
                 values: new object[,]
                 {
-                    {
-                        "Daylight",
-                        "https://cdn.pixabay.com/photo/2014/04/02/14/04/vinyl-306070_1280.png",
-                        "david_kushner_daylight.mp3",
-                        TimeSpan.FromMinutes(3).Add(TimeSpan.FromSeconds(33)),
-                        23, // AlbumId of the "Daylight" album
-                        DateTime.Now,
-                        DateTime.Now
-                    }
-                });
-
-
-            migrationBuilder.InsertData(
-                table: "Songs",
-                columns: new[] { "Title", "Poster", "FilePath", "Duration", "AlbumId", "UploadDate", "DataUpdate" },
-                values: new object[,]
-                {
                 {
                     "Daylight",
                     "https://cdn.pixabay.com/photo/2014/04/02/14/04/vinyl-306070_1280.png",
@@ -390,6 +373,17 @@ namespace MusicCollection_DAL.Migrations
                     DateTime.Now
                 }
                 });
+
+            migrationBuilder.InsertData(
+               table: "M_ArtistM_Song",
+               columns: new[] { "SongsId", "ArtistsId" },
+               values: new object[,]
+               {
+                {
+                    24, 18
+                }
+               });
+
 
             migrationBuilder.InsertData(
                 table: "Statuses",

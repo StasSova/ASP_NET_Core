@@ -1,4 +1,6 @@
 ﻿using MusicCollection_DAL.Interfaces.Generic;
+using MusicCollection_DAL.Interfaces.Music;
+using MusicCollection_DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ namespace MusicCollection_DAL.Interfaces
     public class EFUnitOfWork : IUnitOfWork
     {
         private GenericRepository generic;
+        private MusicRepository music;
         private SpotifyContext spotifyContext;
         public EFUnitOfWork(SpotifyContext context)
         {
@@ -20,6 +23,14 @@ namespace MusicCollection_DAL.Interfaces
             get
             {
                 return generic ??= new GenericRepository(spotifyContext);
+            }
+        }
+
+        public IMusicRepository Music
+        {
+            get
+            {
+                return music ??= new MusicRepository(spotifyContext);
             }
         }
     }

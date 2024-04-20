@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MusicCollection_BLL.Interfaces.Music;
 using MusicCollection_BLL.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddSpotifyContext(connection);
 builder.Services.AddUserAuthentication();
 builder.Services.AddPasswordHashing();
 builder.Services.AddUnitOfWork();
+builder.Services.AddScoped<IMusicService, MusicService>();
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
@@ -37,6 +40,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 app.UseSession();
+
+#if DEBUG
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=User}/{action=Login}/{id?}");
+#endif
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

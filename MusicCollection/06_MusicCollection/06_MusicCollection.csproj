@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="wwwroot\Icons\" />
     <Folder Include="wwwroot\img\album\poster\" />
     <Folder Include="wwwroot\songs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
   </ItemGroup>
 
   <ItemGroup>

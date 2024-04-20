@@ -24,7 +24,9 @@ namespace MusicCollection_BLL.DTO
             Plays = model.Plays;
             Downloads = model.Downloads;
             AlbumId = model.AlbumId;
-            Album = model.Album?.Title;
+            Album = new T_Album(model.Album);
+
+            Artists = model.Artists.Select(x => new T_Artist(x)).ToList();
         }
 
         public string Title { get; set; }
@@ -35,6 +37,7 @@ namespace MusicCollection_BLL.DTO
         public int Plays { get; set; }
         public int Downloads { get; set; }
         public int AlbumId { get; set; }
-        public string? Album { get; set; }
+        public T_Album? Album { get; set; }
+        public ICollection<T_Artist> Artists { get; set; }
     }
 }

@@ -1,9 +1,41 @@
-﻿@{
+﻿@model _06_MusicCollection.Models.ViewModel.Home.VM_Index;
+
+<link rel="stylesheet" href="~/css/Home/home.css" />
+@{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout_Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="home">
+    <div class="container">
+        @foreach (var group in Model.Groups)
+        {
+            <div class="group">
+                <div class="gr_header">
+                    <a class="gr_title" href="#">@group.Name</a>
+                    <a href="#">Show all</a>
+                </div>
+                <div class="gr_albums">
+                    @foreach (var album in group.Albums)
+                    {
+                        <a asp-action="MusicsByAlbum" asp-route-id="@album.Id">
+                            <div class="album">
+                                <div class="img_cont">
+                                    <img class="alb_img" src=@album.Poster alt="poster" />
+                                </div>
+                                <h1 class="alb_title">@album.Title</h1>
+                                <div class="alb_art">
+                                    @foreach (var artist in album.Artists.Take(2))
+                                    {
+                                        <a asp-action="MusicsByArtist" asp-route-id="@artist.Id">@artist.Name</a>
+                                    }
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+

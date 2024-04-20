@@ -18,6 +18,6 @@ namespace MusicCollection_BLL.DTO
 
             Name = model.Name;
         }
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
 }

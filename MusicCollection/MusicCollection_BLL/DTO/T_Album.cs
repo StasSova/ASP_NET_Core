@@ -18,12 +18,10 @@ namespace MusicCollection_BLL.DTO
 
             Title = model.Title;
             Poster = model.Poster;
-            Artists = model.Artists?.Select(x => x.Name).ToList();
-            Songs = model.Songs?.Select(x => x.Title).ToList();
+            Artists = model.Artists?.Select(x => new T_Artist(x)).ToList();
         }
-        public required string Title { get; set; }
+        public string Title { get; set; }
         public string Poster { get; set; }
-        public List<string>? Artists { get; set; } = new List<string>();
-        public List<string>? Songs { get; set; } = new List<string>();
+        public List<T_Artist>? Artists { get; set; } = new List<T_Artist>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MusicCollection_DAL.Interfaces.Generic;
+using MusicCollection_DAL.Interfaces.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace MusicCollection_DAL.Interfaces
     public interface IUnitOfWork
     {
         IGeneric Generic { get; }
+        IMusicRepository Music { get; }
     }
 }

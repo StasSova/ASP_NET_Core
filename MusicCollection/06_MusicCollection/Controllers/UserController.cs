@@ -14,6 +14,7 @@ public class UserController : Controller
     // GET: User/Register
     public IActionResult Register()
     {
+
         return View();
     }
 
@@ -24,7 +25,6 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
-            // TODO
             //Регистрация нового пользователя
             var result = await _authenticationService.RegisterUserAsync(user.Email, user.Password);
 
@@ -63,8 +63,21 @@ public class UserController : Controller
     }
 
     // GET: User/Login
-    public IActionResult Login()
+    public async Task<IActionResult> Login()
     {
+#if DEBUG
+        // Проверка входа пользователя
+        var result = await _authenticationService.AuthenticateUserAsync("admin", "Test2020_");
+
+        if (result != null)
+        {
+            // Пользователь аутентифицирован, перенаправить на основную страницу или куда-то еще
+            HttpContext.Session.SetString("email", result.Email);
+            HttpContext.Session.SetInt32("userId", result.Id);
+            HttpContext.Session.SetString("status", result.Status);
+            return RedirectToAction("Index", "Home");
+        }
+#endif
         return View();
     }
 

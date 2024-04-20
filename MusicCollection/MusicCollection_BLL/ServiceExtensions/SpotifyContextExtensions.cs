@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MusicCollection_DAL;
+using MusicCollection_DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

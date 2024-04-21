@@ -1,0 +1,195 @@
+﻿
+.my_hidden {
+    display: none !important;
+}
+
+#audio-player-container {
+    --seek-before-width: 0%;
+    --volume-before-width: 100%;
+    --buffered-width: 0%;
+    grid-column: span 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    padding: 8px 24px;
+
+    path {
+        stroke: #007db5;
+    }
+
+    .info {
+        flex-basis: 20%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+
+        img {
+            width: 40px;
+            height: 40px;
+            border: 4px;
+            background-size: cover;
+        }
+
+        .descr {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+
+            .title {
+                color: var(--white-color);
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .alb_art {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                flex-wrap: wrap;
+                overflow: hidden;
+
+                a {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    color: var(--primary-text-color);
+                    font-size: 12px;
+                    line-height: 20px;
+                    text-decoration: underline;
+                    text-decoration-color: transparent;
+
+                    &:hover {
+                        text-decoration-color: white;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+
+    .aud-main {
+        flex-basis: 60%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+
+        button {
+            padding: 4px;
+            border: 0;
+            background: var(--white-color);
+            cursor: pointer;
+            outline: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+
+        .mus {
+            color: #a7a7a7;
+            width: 60%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            outline: none;
+            position: relative;
+
+            &::-webkit-slider-runnable-track {
+                width: 100%;
+                height: 3px;
+                cursor: pointer;
+                background: linear-gradient(to right, rgba(0, 125, 181, 0.6) var(--buffered-width), rgba(0, 125, 181, 0.2) var(--buffered-width));
+            }
+
+            &::before {
+                position: absolute;
+                content: "";
+                top: 8px;
+                left: 0;
+                width: var(---seek-before-width);
+                height: 3px;
+                background-color: #007db5;
+                cursor: pointer;
+            }
+            // кружек
+            &::-webkit-slider-thumb {
+                position: relative;
+                -webkit-appearance: none;
+                box-sizing: content-box;
+                border: 1px solid #007db5;
+                height: 15px;
+                width: 15px;
+                border-radius: 50%;
+                background-color: #fff;
+                cursor: pointer;
+                margin: -7px 0 0 0;
+            }
+
+            &:active::-webkit-slider-thumb {
+                transform: scale(1.2);
+                background: #007db5;
+            }
+
+            &::-ms-track {
+                width: 100%;
+                height: 3px;
+                cursor: pointer;
+                background: transparent;
+                border: solid transparent;
+                color: transparent;
+            }
+
+            & ::-ms-fill-lower {
+                background-color: #007db5;
+            }
+
+            & ::-ms-fill-upper {
+                background: linear-gradient(to right, rgba(0, 125, 181, 0.6) var(---buffered-width), rgba(0, 125, 181, 0.2) var(--buffered-width));
+            }
+
+            &::-ms-thumb {
+                box-sizing: content-box;
+                border: 1px solid #007db5;
+                height: 15px;
+                width: 15px;
+                border-radius: 50%;
+                background-color: #fff;
+                cursor: pointer;
+            }
+
+            &:active::-ms-thumb {
+                transform: scale(1.2);
+                background: #007db5;
+            }
+        }
+    }
+
+
+    .param {
+        position: relative;
+        color: #a7a7a7;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+
+        button {
+            padding: 8px;
+            border: 0;
+            cursor: pointer;
+            background-color: transparent;
+            outline: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    }
+}

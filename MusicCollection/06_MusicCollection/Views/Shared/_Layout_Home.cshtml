@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Player.css" />
 </head>
 <body>
 
@@ -169,9 +170,7 @@
         </div>
 
 
-        @* Добавить стили, добавить корреткно обработчик *@
-
-        <div id="audio-player-container">
+        <div id="audio-player-container" class="my_hidden">
             <audio src="https://assets.codepen.io/4358584/Anitek_-_Komorebi.mp3" preload="metadata" loop></audio>
 
             <div class="info">
@@ -184,9 +183,9 @@
                 </div>
             </div>
 
-            <div class="main">
-                <div class="nav">
-                    <button id="play-icon">Play</button>
+            <div class="aud-main">
+                <div class="aud-nav">
+                    <button id="play-icon"></button>
                 </div>
                 <div class="mus">
                     <span id="current-time" class="time">0:00</span>
@@ -196,9 +195,9 @@
             </div>
 
             <div class="param">
-                <output id="volume-output">100</output>
+                <button id="mute-icon"></button>
                 <input type="range" id="volume-slider" max="100" value="100">
-                <button id="mute-icon">Mute</button>
+                <output id="volume-output">100</output>
             </div>
         </div>
 
@@ -207,18 +206,29 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 
     <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.7.6/build/player/lottie.min.js"></script>
     <script>
+        // Получаем элементы DOM
         const playIconContainer = document.getElementById('play-icon');
         const audioPlayerContainer = document.getElementById('audio-player-container');
         const seekSlider = document.getElementById('seek-slider');
         const volumeSlider = document.getElementById('volume-slider');
         const muteIconContainer = document.getElementById('mute-icon');
+        const audio = document.querySelector('audio');
+        const durationContainer = document.getElementById('duration');
+        const currentTimeContainer = document.getElementById('current-time');
+        const outputContainer = document.getElementById('volume-output');
+
+        const songImg = document.getElementById('song-img');
+        const songTitle = document.getElementById('song-title');
+        const albArt = document.getElementById('alb_art');
+        // Инициализируем состояния
         let playState = 'play';
         let muteState = 'unmute';
+        let raf = null;
 
+        // Загружаем анимации
         const playAnimation = lottie.loadAnimation({
             container: playIconContainer,
             path: 'https://maxst.icons8.com/vue-static/landings/animated-icons/icons/pause/pause.json',
@@ -227,7 +237,6 @@
             autoplay: false,
             name: "Play Animation",
         });
-
         const muteAnimation = lottie.loadAnimation({
             container: muteIconContainer,
             path: 'https://maxst.icons8.com/vue-static/landings/animated-icons/icons/mute/mute.json',
@@ -237,9 +246,12 @@
             name: "Mute Animation",
         });
 
+        // Устанавливаем начальное состояние анимации
         playAnimation.goToAndStop(14, true);
 
-        playIconContainer.addEventListener('click', () => {
+
+        // Функция для переключения состояния воспроизведения
+        function togglePlay() {
             if (playState === 'play') {
                 audio.play();
                 playAnimation.playSegments([14, 27], true);
@@ -251,9 +263,10 @@
                 cancelAnimationFrame(raf);
                 playState = 'play';
             }
-        });
+        }
 
-        muteIconContainer.addEventListener('click', () => {
+        // Функция для переключения состояния звука
+        function toggleMute() {
             if (muteState === 'unmute') {
                 muteAnimation.playSegments([0, 15], true);
                 audio.muted = true;
@@ -263,26 +276,26 @@
                 audio.muted = false;
                 muteState = 'unmute';
             }
-        });
-
-        const showRangeProgress = (rangeInput) => {
-            if (rangeInput === seekSlider) audioPlayerContainer.style.setProperty('--seek-before-width', rangeInput.value / rangeInput.max * 100 + '%');
-            else audioPlayerContainer.style.setProperty('--volume-before-width', rangeInput.value / rangeInput.max * 100 + '%');
         }
 
-        seekSlider.addEventListener('input', (e) => {
-            showRangeProgress(e.target);
-        });
-        volumeSlider.addEventListener('input', (e) => {
-            showRangeProgress(e.target);
-        });
+        // Добавляем обработчики событий для кнопок воспроизведения и отключения звука
+        playIconContainer.addEventListener('click', togglePlay);
+        muteIconContainer.addEventListener('click', toggleMute);
 
-        const audio = document.querySelector('audio');
-        const durationContainer = document.getElementById('duration');
-        const currentTimeContainer = document.getElementById('current-time');
-        const outputContainer = document.getElementById('volume-output');
-        let raf = null;
 
+        // Функция для отображения прогресса воспроизведения и громкости
+        const showRangeProgress = (rangeInput) => {
+            const beforeWidth = rangeInput.value / rangeInput.max * 100 + '%';
+            const propertyName = rangeInput === seekSlider ? '--seek-before-width' : '--volume-before-width';
+            audioPlayerContainer.style.setProperty(propertyName, beforeWidth);
+        }
+
+
+        // Добавляем обработчики событий для слайдеров воспроизведения и громкости
+        seekSlider.addEventListener('input', (e) => { showRangeProgress(e.target); });
+        volumeSlider.addEventListener('input', (e) => { showRangeProgress(e.target); });
+
+        // Функция для расчета времени воспроизведения
         const calculateTime = (secs) => {
             const minutes = Math.floor(secs / 60);
             const seconds = Math.floor(secs % 60);
@@ -290,19 +303,21 @@
             return `${minutes}:${returnedSeconds}`;
         }
 
+        // Функция для отображения продолжительности аудио
         const displayDuration = () => {
             durationContainer.textContent = calculateTime(audio.duration);
         }
 
-        const setSliderMax = () => {
-            seekSlider.max = Math.floor(audio.duration);
-        }
+        // Функция для установки максимального значения слайдера воспроизведения
+        const setSliderMax = () => { seekSlider.max = Math.floor(audio.duration); }
 
+        // Функция для отображения буферизованного объема аудио
         const displayBufferedAmount = () => {
             const bufferedAmount = Math.floor(audio.buffered.end(audio.buffered.length - 1));
             audioPlayerContainer.style.setProperty('--buffered-width', `${(bufferedAmount / seekSlider.max) * 100}%`);
         }
 
+        // Функция для обновления слайдера воспроизведения и времени воспроизведения во время воспроизведения
         const whilePlaying = () => {
             seekSlider.value = Math.floor(audio.currentTime);
             currentTimeContainer.textContent = calculateTime(seekSlider.value);
@@ -310,11 +325,13 @@
             raf = requestAnimationFrame(whilePlaying);
         }
 
+        // Если аудио уже загружено, отображаем продолжительность, устанавливаем максимальное значение слайдера и отображаем буферизованный объем
         if (audio.readyState > 0) {
             displayDuration();
             setSliderMax();
             displayBufferedAmount();
         } else {
+            // Если аудио еще не загружено, добавляем обработчик события для отображения продолжительности, установки максимального значения слайдера и отображения буферизованного объема после загрузки метаданных
             audio.addEventListener('loadedmetadata', () => {
                 displayDuration();
                 setSliderMax();
@@ -322,8 +339,10 @@
             });
         }
 
+        // Добавляем обработчик события для отображения буферизованного объема во время буферизации
         audio.addEventListener('progress', displayBufferedAmount);
 
+        // Добавляем обработчики событий для обновления текущего времени воспроизведения и установки текущего времени воспроизведения при изменении слайдера воспроизведения
         seekSlider.addEventListener('input', () => {
             currentTimeContainer.textContent = calculateTime(seekSlider.value);
             if (!audio.paused) {
@@ -338,13 +357,43 @@
             }
         });
 
+        // Добавляем обработчик события для обновления громкости при изменении слайдера громкости
         volumeSlider.addEventListener('input', (e) => {
             const value = e.target.value;
             outputContainer.textContent = value;
             audio.volume = value / 100;
         });
 
+        function initializeNewSong(FilePath, posterUrl, title, albumId, albumTitle, duration, artists) {
+            // Удаляем класс my_hidden
+            audioPlayerContainer.classList.remove('my_hidden');
+
+            // Обновляем информацию о песне
+            songImg.innerHTML = `<img src="${posterUrl}" alt="image" />`;
+            songTitle.innerText = title;
+            albArt.innerHTML = artists.split('|&|').map(a => {
+                const [id, name] = a.split(',');
+                return `<a asp-action="MusicsByArtist" asp-route-id="${id}">${name}</a>`;
+            }).join('');
+
+            // Обновляем источник аудио и начинаем воспроизведение
+            audio.src = `/songs/${FilePath}`;
+            audio.addEventListener('loadedmetadata', () => {
+                // Обновляем максимальное значение слайдера и отображаемую продолжительность
+                seekSlider.max = Math.floor(audio.duration);
+                durationContainer.textContent = calculateTime(audio.duration);
+                // Начинаем воспроизведение
+                togglePlay();
+            });
+
+            // Если песня уже играет, обновляем кнопку воспроизведения, чтобы отразить новую песню
+            if (playState === 'pause') {
+                playAnimation.playSegments([14, 27], true);
+            }
+        }
+
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

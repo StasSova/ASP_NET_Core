@@ -69,7 +69,7 @@
                     <div class="song">
 
 
-                        <button class="id" onclick="playSong('@song.FilePath' ,'@song.Poster', '@song.Title', '@song.Album.Id', '@song.Album.Title', '@song.Duration.ToString(@"m\:ss")', '@string.Join(",", song.Artists.Select(a => $"{a.Id},{a.Name}"))')">
+                        <button class="id" onclick="playSong('@song.FilePath' ,'@song.Poster', '@song.Title', '@song.Album.Id', '@song.Album.Title', '@song.Duration.ToString(@"m\:ss")', '@string.Join("|&|", song.Artists.Select(a => $"{a.Id},{a.Name}"))')">
                             @{
                                 index += 1;
                             }
@@ -114,26 +114,7 @@
 @section Scripts {
     <script>
         function playSong(FilePath, posterUrl, title, albumId, albumTitle, duration, artists) {
-            // Обновление информации о песне
-            document.getElementById('song-img').innerHTML = `<img src="${posterUrl}" alt="image" />`;
-            document.getElementById('song-title').innerText = title;
-            document.getElementById('alb_art').innerHTML = artists.split(',').map(a => {
-                const [id, name] = a.split(',');
-                return `<a asp-action="MusicsByArtist" asp-route-id="${id}">${name}</a>`;
-            }).join('');
-
-            // Обновление источника аудио и начало воспроизведения
-            const audio = document.getElementById('audio-player-container').querySelector('audio');
-            audio.src = `/songs/${FilePath}`;
-            audio.addEventListener('loadedmetadata', () => {
-                // Обновление максимального значения ползунка и отображаемой продолжительности
-                const seekSlider = document.getElementById('seek-slider');
-                seekSlider.max = Math.floor(audio.duration);
-                const durationContainer = document.getElementById('duration');
-                durationContainer.textContent = calculateTime(audio.duration);
-                // Начало воспроизведения
-                audio.play();
-            });
+            initializeNewSong(FilePath, posterUrl, title, albumId, albumTitle, duration, artists);
         }
     </script>
 }

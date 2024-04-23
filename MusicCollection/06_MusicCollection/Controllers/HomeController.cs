@@ -1,6 +1,6 @@
 using _06_MusicCollection.Attributes;
 using _06_MusicCollection.Models;
-using _06_MusicCollection.Models.TagsHelper;
+using _06_MusicCollection;
 using _06_MusicCollection.Models.ViewModel.Home;
 using _06_MusicCollection.Models.ViewModel.Music;
 using _06_MusicCollection.Models.ViewModel.Tags;
@@ -59,6 +59,7 @@ namespace _06_MusicCollection.Controllers
                 viewData.Id = id;
 
 
+
                 T_Album alb = await _musicService.GetAlbumById(id);
                 viewData.Title = alb.Title;
                 viewData.Poster = alb.Poster;
@@ -71,15 +72,12 @@ namespace _06_MusicCollection.Controllers
                 {
                     try
                     {
-                        for (int i = 0; i < 10; i++)
+                        foreach (T_Song song in songs)
                         {
-                            foreach (T_Song song in songs)
-                            {
-                                viewData.TotalDuration += song.Duration;
-                                viewData.TotalLikes += song.Likes;
-                                viewData.TotalSongs++;
-                                temm.Add(song);
-                            }
+                            viewData.TotalDuration += song.Duration;
+                            viewData.TotalLikes += song.Likes;
+                            viewData.TotalSongs++;
+                            temm.Add(song);
                         }
                     }
                     catch { }
@@ -106,6 +104,7 @@ namespace _06_MusicCollection.Controllers
 
 
                 viewData.Sort = new VM_Sort(sortOrder);
+
                 viewData.Pagination = new VM_Pagination(count, page, pageSize);
 
                 HttpContext.Session.SetString("path", Request.Path);
@@ -116,13 +115,68 @@ namespace _06_MusicCollection.Controllers
                 return Error();
             }
         }
-        public async Task<IActionResult> MusicsByArtist(int id)
+        public async Task<IActionResult> MusicsByArtist(int id, int page = 1, SortState sortOrder = SortState.TitleAsc)
         {
             try
             {
+                if (id == 0) return Error();
+
+                int pageSize = 5;
+                VM_Musics viewData = new VM_Musics();
+                viewData.Id = id;
+                T_Artist art = await _musicService.GetArtistById(id);
+                viewData.Title = art.Name;
+
+                // добавить јртисту постер
+
+                viewData.Poster = "https://thumbs.dreamstime.com/z/art-exhibition-posters-invitation-layout-template-art-exhibition-posters-invitation-to-modern-exposition-abstract-background-245686965.jpg";
+                viewData.Description = $"Songs of {viewData.Title}";
+
+
+                ICollection<T_Song> songs = await _musicService.GetSongsByArtistId(id);
+                ICollection<T_Song> temm = new List<T_Song>();
+
+                if (songs != null)
+                {
+                    try
+                    {
+                        foreach (T_Song song in songs)
+                        {
+                            viewData.TotalDuration += song.Duration;
+                            viewData.TotalLikes += song.Likes;
+                            viewData.TotalSongs++;
+                            temm.Add(song);
+                        }
+                    }
+                    catch { }
+                }
+
+                //viewData.Songs = songs;
+                viewData.Songs = temm;
+
+                // сортировка
+                viewData.Songs = sortOrder switch
+                {
+                    SortState.TitleDesc => viewData.Songs.OrderByDescending(s => s.Title).ToList(),
+                    SortState.TitleAsc => viewData.Songs.OrderBy(s => s.Title).ToList(),
+                    SortState.AlbumDesc => viewData.Songs.OrderByDescending(s => s.Album).ToList(),
+                    SortState.AlbumAsc => viewData.Songs.OrderBy(s => s.Album).ToList(),
+                    SortState.DurationDesc => viewData.Songs.OrderByDescending(s => s.Duration).ToList(),
+                    SortState.DurationAsc => viewData.Songs.OrderBy(s => s.Duration).ToList(),
+                    _ => viewData.Songs.OrderBy(x => x.Title).ToList()
+                };
+
+                // пагинаци€ 
+                var count = viewData.Songs.Count;
+                viewData.Songs = viewData.Songs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+
+                viewData.Sort = new VM_Sort(sortOrder);
+
+                viewData.Pagination = new VM_Pagination(count, page, pageSize);
 
                 HttpContext.Session.SetString("path", Request.Path);
-                return View("Musics");
+                return View("Musics", viewData);
             }
             catch
             {

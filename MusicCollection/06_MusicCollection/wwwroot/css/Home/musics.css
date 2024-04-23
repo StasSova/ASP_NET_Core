@@ -1,4 +1,5 @@
-﻿* {
+﻿@charset "UTF-8";
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -208,4 +209,35 @@
   flex-basis: 20%;
   width: 100%;
   overflow-x: hidden;
+}
+
+.pagination {
+  margin: 24px auto;
+  display: flex;
+  max-width: 360px;
+  align-items: center;
+  justify-content: space-evenly;
+  list-style-type: none;
+  /* Стили для отдельного элемента пагинации */
+}
+.pagination .page-item {
+  margin-right: 5px;
+  /* Стили для активного элемента пагинации */
+  /* Стили для ссылки в элементе пагинации */
+}
+.pagination .page-item .page-link {
+  text-decoration: none;
+  cursor: default;
+}
+.pagination .page-item .page-link:hover {
+  cursor: pointer;
+}
+.pagination .active {
+  font-weight: bold;
+}
+.pagination .active .page-link {
+  color: #007bff;
+}
+.pagination .active .page-link:hover {
+  cursor: default;
 }

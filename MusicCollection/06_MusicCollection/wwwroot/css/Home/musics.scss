@@ -245,3 +245,38 @@
         }
     }
 }
+
+.pagination {
+    margin: 24px auto;
+    display: flex;
+    max-width: 360px;
+    align-items: center;
+    justify-content: space-evenly;
+    list-style-type: none;
+    /* Стили для отдельного элемента пагинации */
+    .page-item {
+        margin-right: 5px;
+        /* Стили для активного элемента пагинации */
+        /* Стили для ссылки в элементе пагинации */
+        .page-link {
+            text-decoration: none;
+            cursor: default;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .active {
+        font-weight: bold;
+
+        .page-link {
+            color: #007bff;
+
+            &:hover {
+                cursor: default;
+            }
+        }
+    }
+}

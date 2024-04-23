@@ -10,7 +10,9 @@ namespace MusicCollection_BLL.Interfaces.Music
     public interface IMusicService
     {
         Task<T_Album> GetAlbumById(int id);
+        Task<T_Artist> GetArtistById(int id);
         Task<ICollection<T_Album>> GetPopularAlbums();
         Task<ICollection<T_Song>> GetSongsByAlbumId(int id);
+        Task<ICollection<T_Song>> GetSongsByArtistId(int id);
     }
 }

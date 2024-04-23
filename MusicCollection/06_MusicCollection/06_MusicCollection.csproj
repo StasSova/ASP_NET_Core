@@ -39,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Models\TagsHelper\PageLinkTagHelper.cs">
+      <CustomToolNamespace>TagTest</CustomToolNamespace>
+    </Compile>
     <Compile Update="Resources\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

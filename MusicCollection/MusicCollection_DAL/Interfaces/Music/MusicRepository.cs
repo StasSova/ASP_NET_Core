@@ -59,5 +59,18 @@ namespace MusicCollection_DAL.Interfaces.Music
                 return null;
             }
         }
+
+        public async Task<ICollection<M_Song>> GetSongsByArtistId(int id)
+        {
+            try
+            {
+                var album = await context.Artists.FirstAsync(x => x.Id == id);
+                return album.Songs;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -45,11 +45,35 @@ namespace MusicCollection_BLL.Interfaces.Music
                 return null;
             }
         }
+        public async Task<T_Artist> GetArtistById(int id)
+        {
+            try
+            {
+                var alb = await _dbContext.Generic.GetFirstAsync<M_Artist, int>("Id", id);
+                return new T_Artist(alb);
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public async Task<ICollection<T_Song>> GetSongsByAlbumId(int id)
         {
             try
             {
                 return (await _dbContext.Music.GetSongsByAlbumId(id)).Select(x => new T_Song(x)).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<ICollection<T_Song>> GetSongsByArtistId(int id)
+        {
+            try
+            {
+                return (await _dbContext.Music.GetSongsByArtistId(id)).Select(x => new T_Song(x)).ToList();
             }
             catch (Exception ex)
             {

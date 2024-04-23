@@ -371,7 +371,7 @@
             songTitle.innerText = title;
             albArt.innerHTML = artists.split('|&|').map(a => {
                 const [id, name] = a.split(',');
-                return `<a asp-action="MusicsByArtist" asp-route-id="${id}">${name}</a>`;
+                return `<a href="/Home/MusicsByArtist/${id}">${name}</a>`;
             }).join('');
 
             // Обновляем источник аудио и начинаем воспроизведение

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using _06_MusicCollection.Models.ViewModel.Tags;
 
 namespace _06_MusicCollection.Models.TagsHelper;
-
+//PageLinkTagHelper
 public class PageLinkTagHelper : TagHelper
 {
     private IUrlHelperFactory urlHelperFactory;
@@ -27,6 +27,7 @@ public class PageLinkTagHelper : TagHelper
         if (PageModel == null) throw new Exception("PageModel is not set");
         IUrlHelper urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
         output.TagName = "div";
+
 
         // набор ссылок будет представлять список ul
         TagBuilder tag = new TagBuilder("ul");

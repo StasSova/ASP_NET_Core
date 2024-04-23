@@ -12,5 +12,6 @@ namespace MusicCollection_DAL.Interfaces.Music
         Task<ICollection<M_Album>> GetPopularAlbumsByArtist(string artistName, int numberOfAlbums);
         Task<ICollection<M_Album>> GetPopularAlbumsByTimePeriod(DateOnly startDate, DateOnly endDate, int numberOfAlbums);
         Task<ICollection<M_Song>> GetSongsByAlbumId(int id);
+        Task<ICollection<M_Song>> GetSongsByArtistId(int id);
     }
 }

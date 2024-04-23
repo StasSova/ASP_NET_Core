@@ -1,6 +1,7 @@
 ﻿@model _06_MusicCollection.Models.ViewModel.Home.VM_Musics;
 
 <link rel="stylesheet" href="~/css/Home/musics.css" />
+@addTagHelper *, _06_MusicCollection
 
 @{
     ViewData["Title"] = @Model.Title;
@@ -81,7 +82,6 @@
                 {
                     <div class="song">
 
-
                         <button class="id" onclick="playSong('@song.FilePath' ,'@song.Poster', '@song.Title', '@song.Album.Id', '@song.Album.Title', '@song.Duration.ToString(@"m\:ss")', '@string.Join("|&|", song.Artists.Select(a => $"{a.Id},{a.Name}"))')">
                             @{
                                 index += 1;
@@ -110,17 +110,15 @@
                             </div>
                         </div>
 
-                        @* TODO добавить альбом, который был присвоен изначально песне *@
-                        <a class="album" asp-action="MusicsByArtist" asp-route-id="@song.Album.Id">@song.Album.Title</a>
+                        <a class="album" asp-action="MusicsByAlbum" asp-route-id="@song.Album.Id">@song.Album.Title</a>
                         <p class="dur">@song.Duration.ToString(@"m\:ss")</p>
                     </div>
 
                 }
 
-                <page-link page-model="Model.PageViewModel" page-action="MusicsByAlbum"
+                <page-link page-model="Model.Pagination" page-action="MusicsByAlbum"
                            page-url-id="@(Model.Id)"
-                           page-url-sortOrder="@(Model.Sort.Current)" />
-
+                           page-url-sortOrder="@(Model.Sort.Current)"></page-link>
             }
         </div>
     </div>

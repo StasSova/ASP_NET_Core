@@ -1,0 +1,40 @@
+﻿@model _06_MusicCollection.Models.ViewModel.Home.VM_Profile;
+<link rel="stylesheet" href="~/css/Home/profile.min.css" />
+@{
+    ViewData["Title"] = @Model.Title;
+    Layout = "_Layout_Home";
+}
+
+<section class="profile-cont">
+    <div class="header">
+        <p>@Resources.Resource.Pr_Head</p> @* Settings *@
+    </div>
+    <div class="settings">
+        <div class="group">
+            <div class="gr-title">
+                <p>@Resources.Resource.Pr_LangHead</p> @* Language *@
+            </div>
+            <div class="gr-item">
+                <p class="desc">@Resources.Resource.Pr_LangDesc</p> @* description *@
+                <form id="languageForm" asp-action="ChangeCulture" asp-asp-controller="Home" method="post">
+                    <select name="lang" onchange="submitForm()">
+                        <option disabled selected>@Resources.Resource.ChooseLang</option>
+                        @foreach (var it in Model.Languages)
+                        {
+                            <option value="@it.ShortName">@it.Name</option>
+                        }
+                    </select>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function submitForm() {
+            document.getElementById("languageForm").submit();
+        }
+    </script>
+}

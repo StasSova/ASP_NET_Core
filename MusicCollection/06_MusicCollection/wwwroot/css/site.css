@@ -122,6 +122,7 @@ nav {
         fill: var(--primary-text-color);
     }
 
+    .nav-el a,
     .nav-icon path,
     .nav-el p {
         font-size: 16px;
@@ -138,10 +139,12 @@ nav {
     fill: var(--white-color);
 }
 
+.nav-el:hover a,
 .nav-el:hover p {
     color: var(--white-color);
 }
 
+.active-nav-el a,
 .active-nav-el p,
 .active-nav-el .nav-icon path {
     color: var(--white-color);
@@ -334,6 +337,10 @@ nav .lang button {
                 color: var(--white-color);
             }
 
+                .main-cont header .auth .welc a {
+                    margin-left: 4px;
+                }
+
 a.button {
     display: flex;
     align-items: center;
@@ -391,7 +398,7 @@ footer {
             cursor: pointer;
         }
 
-    footer .foot-tilte {
+    footer .foot-title {
         margin-bottom: 16px;
         cursor: default;
         color: var(--white-color);

@@ -1,3 +1,4 @@
+using _06_MusicCollection.Services.Language;
 using Microsoft.EntityFrameworkCore;
 using MusicCollection_BLL.Interfaces.Music;
 using MusicCollection_BLL.ServiceExtensions;
@@ -13,6 +14,8 @@ builder.Services.AddUserAuthentication();
 builder.Services.AddPasswordHashing();
 builder.Services.AddUnitOfWork();
 builder.Services.AddScoped<IMusicService, MusicService>();
+builder.Services.AddScoped<ILangRead, ReadLangServices>();
+
 
 
 builder.Services.AddControllersWithViews();
@@ -23,6 +26,9 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = "Session"; // Каждая сессия имеет свой идентификатор, который сохраняется в куках.
 
 });
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

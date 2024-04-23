@@ -1,6 +1,7 @@
 ﻿@model _06_MusicCollection.Models.ViewModel.Home.VM_Musics;
 
 <link rel="stylesheet" href="~/css/Home/musics.css" />
+
 @{
     ViewData["Title"] = @Model.Title;
     Layout = "_Layout_Home";
@@ -11,7 +12,7 @@
     <div class="header">
         <img src=@Model.Poster alt="Alternate Text" />
         <div class="info">
-            <p class="pl">Playlist</p>
+            <p class="pl">@Resources.Resource.Playlist</p>
             <p class="title">@Model.Title</p>
             <p class="descr">@Model.Description</p>
             <div class="det">
@@ -23,8 +24,8 @@
                     </div>
                     <p>Spotify</p>
                 </div>
-                •<p>@Model.TotalLikes likes</p>
-                •<p>@Model.TotalSongs songs</p>
+                • <p>@Model.TotalLikes @Resources.Resource.TotalLikes</p>
+                • <p>@Model.TotalSongs @Resources.Resource.TotalSongs</p>
                 •@{
                     // Преобразуем TimeSpan в строку с форматом времени "hh\:mm\:ss"
                     string durationString = Model.TotalDuration.ToString(@"hh\:mm\:ss");
@@ -53,14 +54,26 @@
     <div class="collection">
         <div class="header">
             <p class="id">#</p>
-            <p>Title</p>
-            <p>Album</p>
-            <p>Time</p>
+            <a asp-action="MusicsByAlbum"
+               asp-route-id="@(Model.Id)"
+               asp-route-sortOrder="@(Model.Sort.Title)">
+                @Resources.Resource.Title
+            </a>
+            <a asp-action="MusicsByAlbum"
+               asp-route-id="@(Model.Id)"
+               asp-route-sortOrder="@(Model.Sort.Album)">
+                @Resources.Resource.Album
+            </a>
+            <a asp-action="MusicsByAlbum"
+               asp-route-id="@(Model.Id)"
+               asp-route-sortOrder="@(Model.Sort.Duration)">
+                @Resources.Resource.Time
+            </a>
         </div>
         <div class="content">
             @if (Model.Songs == null || Model.Songs.Count == 0)
             {
-                <p>Songs not found</p>
+                <p>@Resources.Resource.SongsNotFound</p>
             }
             else
             {
@@ -103,11 +116,17 @@
                     </div>
 
                 }
+
+                <page-link page-model="Model.PageViewModel" page-action="MusicsByAlbum"
+                           page-url-id="@(Model.Id)"
+                           page-url-sortOrder="@(Model.Sort.Current)" />
+
             }
         </div>
     </div>
 
 </section>
+
 
 
 

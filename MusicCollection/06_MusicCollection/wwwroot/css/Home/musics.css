@@ -114,6 +114,9 @@
   text-align: center;
   padding: 0 8px;
 }
+.musics .collection .header a {
+  text-decoration: none;
+}
 .musics .collection .content .song {
   display: flex;
   flex-direction: row;

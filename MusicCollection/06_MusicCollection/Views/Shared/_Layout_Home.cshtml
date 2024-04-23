@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject _06_MusicCollection.Services.Language.ILangRead MyLangRead
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -27,7 +29,7 @@
                             <path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
                         </svg>
                     </div>
-                    <p>Home</p>
+                    <a asp-action="Index" asp-controller="Home">@Resources.Resource.HomeLink</a>
                 </div>
 
                 <div class="nav-el">
@@ -36,21 +38,21 @@
                             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
                         </svg>
                     </div>
-                    <p>Search</p>
+                    <a asp-action="Search" asp-controller="Home">@Resources.Resource.SearchLink</a>
                 </div>
 
                 @if (Context.Session.GetString("status") != null)
                 {
                     @if (Context.Session.GetString("status") == "Administrator")
                     {
-                        <a class="nav-el">
+                        <div class="nav-el">
                             <div class="nav-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                     <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
                                 </svg>
                             </div>
-                            <p>Managment</p>
-                        </a>
+                            <a asp-action="Index" asp-controller="Management">@Resources.Resource.ManagementLink</a>
+                        </div>
                     }
                 }
 
@@ -64,46 +66,40 @@
                                 <path d="M264.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 149.8C37.4 145.8 32 137.3 32 128s5.4-17.9 13.9-21.8L264.5 5.2zM476.9 209.6l53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 277.8C37.4 273.8 32 265.3 32 256s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2zm-152 198.2l152-70.2 53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 405.8C37.4 401.8 32 393.3 32 384s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0z" />
                             </svg>
                         </div>
-                        <p>Your Library</p>
+                        <p>@Resources.Resource.YourLibrary</p>
                     </div>
 
                     <div class="circle">
-                        <a href="#" title="Create playlist">+</a>
+                        <a href="#" title="@Resources.Resource.CreatePlaylistTooltip">+</a>
                     </div>
                 </div>
 
                 <div class="libr-create nav-card">
-                    <h4>Create your first playlist</h4>
-                    <p>It`s easy, we`ll help you</p>
-                    <input type="button" name="create" value="Create palylist" />
-                </div>
-
-                <div class="libr-podct nav-card">
-                    <h4>Create your first playlist</h4>
-                    <p>It`s easy, we`ll help you</p>
-                    <input type="button" name="create" value="Create palylist" />
+                    <h4>@Resources.Resource.CreateFirstPlaylist</h4>
+                    <p>@Resources.Resource.EasyDescription</p>
+                    <input type="button" name="create" value="@Resources.Resource.CreatePlaylistButton" />
                 </div>
 
                 <div class="nav-bott">
                     <ul>
-                        <li><a href="#">legal</a></li>
-                        <li><a href="#">Safety & Privacy Center</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Cookie Settings</a></li>
-                        <li><a href="#">About Ads</a></li>
-                        <li><a href="#">Accessibility</a></li>
-                        <li><a href="#">Cookies</a></li>
+                        <li><a href="#">@Resources.Resource.LegalLink</a></li>
+                        <li><a href="#">@Resources.Resource.SafetyPrivacyLink</a></li>
+                        <li><a href="#">@Resources.Resource.PrivacyPolicyLink</a></li>
+                        <li><a href="#">@Resources.Resource.CookieSettingsLink</a></li>
+                        <li><a href="#">@Resources.Resource.AboutAdsLink</a></li>
+                        <li><a href="#">@Resources.Resource.AccessibilityLink</a></li>
+                        <li><a href="#">@Resources.Resource.CookiesLink</a></li>
                     </ul>
                 </div>
 
-                <div class="lang">
-                    <button type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                            <path d="M0 128C0 92.7 28.7 64 64 64H256h48 16H576c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H320 304 256 64c-35.3 0-64-28.7-64-64V128zm320 0V384H576V128H320zM178.3 175.9c-3.2-7.2-10.4-11.9-18.3-11.9s-15.1 4.7-18.3 11.9l-64 144c-4.5 10.1 .1 21.9 10.2 26.4s21.9-.1 26.4-10.2l8.9-20.1h73.6l8.9 20.1c4.5 10.1 16.3 14.6 26.4 10.2s14.6-16.3 10.2-26.4l-64-144zM160 233.2L179 276H141l19-42.8zM448 164c11 0 20 9 20 20v4h44 16c11 0 20 9 20 20s-9 20-20 20h-2l-1.6 4.5c-8.9 24.4-22.4 46.6-39.6 65.4c.9 .6 1.8 1.1 2.7 1.6l18.9 11.3c9.5 5.7 12.5 18 6.9 27.4s-18 12.5-27.4 6.9l-18.9-11.3c-4.5-2.7-8.8-5.5-13.1-8.5c-10.6 7.5-21.9 14-34 19.4l-3.6 1.6c-10.1 4.5-21.9-.1-26.4-10.2s.1-21.9 10.2-26.4l3.6-1.6c6.4-2.9 12.6-6.1 18.5-9.8l-12.2-12.2c-7.8-7.8-7.8-20.5 0-28.3s20.5-7.8 28.3 0l14.6 14.6 .5 .5c12.4-13.1 22.5-28.3 29.8-45H448 376c-11 0-20-9-20-20s9-20 20-20h52v-4c0-11 9-20 20-20z" />
-                        </svg>
-                        English
-                    </button>
-                </div>
+                @*  <div class="lang">
+                <button type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                <path d="M0 128C0 92.7 28.7 64 64 64H256h48 16H576c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H320 304 256 64c-35.3 0-64-28.7-64-64V128zm320 0V384H576V128H320zM178.3 175.9c-3.2-7.2-10.4-11.9-18.3-11.9s-15.1 4.7-18.3 11.9l-64 144c-4.5 10.1 .1 21.9 10.2 26.4s21.9-.1 26.4-10.2l8.9-20.1h73.6l8.9 20.1c4.5 10.1 16.3 14.6 26.4 10.2s14.6-16.3 10.2-26.4l-64-144zM160 233.2L179 276H141l19-42.8zM448 164c11 0 20 9 20 20v4h44 16c11 0 20 9 20 20s-9 20-20 20h-2l-1.6 4.5c-8.9 24.4-22.4 46.6-39.6 65.4c.9 .6 1.8 1.1 2.7 1.6l18.9 11.3c9.5 5.7 12.5 18 6.9 27.4s-18 12.5-27.4 6.9l-18.9-11.3c-4.5-2.7-8.8-5.5-13.1-8.5c-10.6 7.5-21.9 14-34 19.4l-3.6 1.6c-10.1 4.5-21.9-.1-26.4-10.2s.1-21.9 10.2-26.4l3.6-1.6c6.4-2.9 12.6-6.1 18.5-9.8l-12.2-12.2c-7.8-7.8-7.8-20.5 0-28.3s20.5-7.8 28.3 0l14.6 14.6 .5 .5c12.4-13.1 22.5-28.3 29.8-45H448 376c-11 0-20-9-20-20s9-20 20-20h52v-4c0-11 9-20 20-20z" />
+                </svg>
+                English
+                </button>
+                </div> *@
             </div>
 
 
@@ -116,13 +112,13 @@
 
                     @if (Context.Session.GetString("email") != null)
                     {
-                        <p class="welc">Welcome, @Context.Session.GetString("email")</p>
-                        <a class="button transp" asp-action="Logout" asp-controller="User">Log out</a>
+                        <p class="welc">@Resources.Resource.WelcomeMessage <a asp-controller="Home" asp-action="Profile">@Context.Session.GetString("email")</a></p>
+                        <a class="button transp" asp-action="Logout" asp-controller="User">@Resources.Resource.LogoutButton</a>
                     }
                     else
                     {
-                        <a class="button transp" asp-action="Login" asp-controller="User">Sign up</a>
-                        <a class="button white" asp-action="Register" asp-controller="User">Log in</a>
+                        <a class="button transp" asp-action="Login" asp-controller="User">@Resources.Resource.LoginButton</a>
+                        <a class="button white" asp-action="Register" asp-controller="User">@Resources.Resource.RegisterButton</a>
                     }
                 </div>
             </header>
@@ -131,39 +127,41 @@
             </main>
             <footer>
                 <div class="foot-block">
-                    <p class="foot-tilte">Compnay</p>
+                    <p class="foot-title">@Resources.Resource.Company</p>
                     <ul>
-                        <li>About</li>
-                        <li>Jobs</li>
-                        <li>For the Record</li>
+                        <li>@Resources.Resource.About</li>
+                        <li>@Resources.Resource.Jobs</li>
+                        <li>@Resources.Resource.For_the_Record</li>
                     </ul>
                 </div>
 
                 <div class="foot-block">
-                    <p class="foot-tilte">Communities</p>
+                    <p class="foot-title">@Resources.Resource.Communities</p>
                     <ul>
-                        <li>For Artists</li>
-                        <li>Developers</li>
-                        <li>Advertising</li>
-                        <li>Investors</li>
-                        <li>Vendors</li>
+                        <li>@Resources.Resource.For_Artists</li>
+                        <li>@Resources.Resource.Developers</li>
+                        <li>@Resources.Resource.Advertising</li>
+                        <li>@Resources.Resource.Investors</li>
+                        <li>@Resources.Resource.Vendors</li>
                     </ul>
                 </div>
+
                 <div class="foot-block">
-                    <p class="foot-tilte">Useful links</p>
+                    <p class="foot-title">@Resources.Resource.Useful_links</p>
                     <ul>
-                        <li>Support</li>
-                        <li>Free Mobile App</li>
+                        <li>@Resources.Resource.Support</li>
+                        <li>@Resources.Resource.Free_Mobile_App</li>
                     </ul>
                 </div>
+
                 <div class="foot-block">
-                    <p class="foot-tilte">Spotify Plans</p>
+                    <p class="foot-title">@Resources.Resource.Spotify_Plans</p>
                     <ul>
-                        <li>Premium Individual</li>
-                        <li>Premium Duo</li>
-                        <li>Premium Family</li>
-                        <li>Premium Student</li>
-                        <li>Spotify Free</li>
+                        <li>@Resources.Resource.Premium_Individual</li>
+                        <li>@Resources.Resource.Premium_Duo</li>
+                        <li>@Resources.Resource.Premium_Family</li>
+                        <li>@Resources.Resource.Premium_Student</li>
+                        <li>@Resources.Resource.Spotify_Free</li>
                     </ul>
                 </div>
             </footer>

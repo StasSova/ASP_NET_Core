@@ -14,5 +14,9 @@
   {
     "outputFile": "wwwroot/css/Player.css",
     "inputFile": "wwwroot/css/Player.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/Home/profile.css",
+    "inputFile": "wwwroot/css/Home/profile.scss"
   }
 ]

@@ -26,6 +26,11 @@ namespace MusicCollection_DAL.Interfaces
             }
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await spotifyContext.SaveChangesAsync();
+        }
+
         public IMusicRepository Music
         {
             get

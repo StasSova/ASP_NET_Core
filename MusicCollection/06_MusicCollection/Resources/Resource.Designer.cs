@@ -106,6 +106,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Альбомы.
+        /// </summary>
+        public static string AlbumLink {
+            get {
+                return ResourceManager.GetString("AlbumLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Артисты.
+        /// </summary>
+        public static string ArtistLink {
+            get {
+                return ResourceManager.GetString("ArtistLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выберите язык.
         /// </summary>
         public static string ChooseLang {
@@ -291,6 +309,15 @@ namespace Resources {
         public static string ManagementLink {
             get {
                 return ResourceManager.GetString("ManagementLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Треки.
+        /// </summary>
+        public static string MusicsLink {
+            get {
+                return ResourceManager.GetString("MusicsLink", resourceCulture);
             }
         }
         

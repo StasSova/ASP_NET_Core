@@ -12,5 +12,7 @@ namespace MusicCollection_DAL.Interfaces
     {
         IGeneric Generic { get; }
         IMusicRepository Music { get; }
+
+        Task SaveChangesAsync();
     }
 }

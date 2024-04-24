@@ -1,0 +1,510 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_Layout_Management";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/Managment/musics.min.css" />
+
+
+<section class="musics">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="display-4">Musics</h1>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <form>
+                    <input type="hidden" id="hdn-song-id" />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" placeholder="Enter song`s title" value="" autocomplete="off" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="filePath" class="form-label">File path</label>
+                            <input type="file" class="form-control" id="fileMusic" accept=".mp3" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="poster" class="form-label">Poster</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="poster" placeholder="Enter song`s poster" value="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" autocomplete="off" required>
+                                <button class="btn btn-outline-secondary" type="button" id="clearPoster">Clear</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <img id="posterPreview" src="" alt="Poster Preview" class="img-fluid">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Колонка для выбора артистов -->
+                        <div class="col-sm-6">
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <select class="form-select" id="selectArtists">
+                                        <option value="" selected>Select Artist</option>
+                                        <!-- Dynamically populate the list of artists here -->
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-primary" id="btnAddArtist">Add Artist</button>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-12">
+                                    <ul class="list-group" id="artistList">
+                                        <!-- Display added artists here -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Колонка для выбора альбомов -->
+                        <div class="col-sm-6">
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <select class="form-select" id="selectAlbums">
+                                        <option value="" selected>Select Album</option>
+                                        <!-- Dynamically populate the list of albums here -->
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-primary" id="btnAddAlbum">Add Album</button>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-12">
+                                    <ul class="list-group" id="albumList">
+                                        <!-- Display added albums here -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-song">Save Song</a>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)" class="btn btn-info" id="btn-update-song">Update Song</a>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)" class="btn btn-danger" id="btn-delete-song">Delete Song</a>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </form>
+
+            </div>
+            <br />
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Poster</td>
+                            <td>Title</td>
+                            <td>FilePath</td>
+                            <td>Likes</td>
+                            <td>Plays</td>
+                            <td>Downloads</td>
+                            <td>Albums</td>
+                            <td>Artists</td>
+                        </tr>
+                    </thead>
+                    <tbody id="song-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <script>
+        var Artists = [];
+        var Albums = [];
+        $(document).ready(function () {
+
+            // SONGS
+            let songRow = function (song) {
+                // Initialize an empty string to store the row HTML
+                let rowHtml = "<tr data-rowid='" + song.Id + "'>";
+
+                // Add each column value to the row
+                rowHtml += "<td>" + song.Id + "</td>"; // id
+                rowHtml += "<td><img src='" + song.Poster + "' alt='Poster' class='poster-img'></td>"; // Poster
+                rowHtml += "<td>" + song.Title + "</td>"; // Title
+                rowHtml += "<td>" + song.FilePath + "</td>"; // FilePath
+                rowHtml += "<td>" + song.Likes + "</td>"; // Likes
+                rowHtml += "<td>" + song.Plays + "</td>"; // Plays
+                rowHtml += "<td>" + song.Downloads + "</td>"; // Downloads
+
+                // Add album title
+                if (song.Album != null) {
+                    rowHtml += "<td>" + song.Album.Title + "</td>"; // Album
+                } else {
+                    rowHtml += "<td></td>"; // Empty column if no album
+                }
+
+                // Add artists
+                let artistsHtml = "<td>";
+                if (song.Artists != null && song.Artists.length > 0) {
+                    song.Artists.forEach(function (artist) {
+                        artistsHtml += artist.Name + "<br>";
+                    });
+                }
+                artistsHtml += "</td>";
+                rowHtml += artistsHtml;
+
+                // Close the row tag
+                rowHtml += "</tr>";
+
+                return rowHtml;
+            };
+            // Function to handle successful AJAX response and add songs to the list
+            function getSongs() {
+                $.ajax({
+                    url: '@Url.Action("GetSongs", "Management")',
+                    type: "GET",
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // Parse the JSON response
+                        var songs = JSON.parse(response);
+
+                        // Clear the existing song list
+                        $('#song-list').empty();
+
+                        // Iterate over each song and add it to the list
+                        songs.forEach(function (song) {
+                            var songHtml = songRow(song); // Assuming songRow function is defined elsewhere
+                            $('#song-list').append(songHtml);
+                        });
+                    },
+                    error: function (jqXHR, statusText, error) {
+                        console.log(jqXHR.status + '\n' + statusText + '\n' + error);
+                    }
+                });
+            }
+            getSongs();
+
+            // ARTISTS
+            // Function to add artist to the list
+            function addArtist(artistId, artistName) {
+                // Check if artist is already added
+                var existingArtist = Artists.find(a => a.Id === artistId);
+                if (!existingArtist) {
+                    // Add artist to the list
+                    Artists.push({ Id: artistId, Name: artistName });
+                    // Update the list displayed on the UI
+                    $('#artistList').append(`<li class="list-group-item" data-artistid="${artistId}"><span>${artistName}</span><button type="button" class="btn btn-danger btn-sm float-end btnRemoveArtist">Remove</button></li>`);
+                }
+            }
+            // Function to remove artist from the list
+            function removeArtist(artistId) {
+                // Find the index of the artist in the list
+                var index = Artists.findIndex(a => +a.Id === artistId);
+                if (index !== -1) {
+                    // Remove artist from the list
+                    Artists.splice(index, 1);
+                    // Update the list displayed on the UI
+                    $('#artistList').find(`li[data-artistid="${artistId}"]`).remove();
+                }
+            }
+
+            // Event handler for adding artist
+            $('#btnAddArtist').click(function () {
+                var selectedOption = $('#selectArtists option:selected');
+                var artistId = selectedOption.val();
+                var artistName = selectedOption.text();
+                if (artistId && artistName) {
+                    addArtist(artistId, artistName);
+                }
+            });
+
+            // Event handler for removing artist
+            $(document).on('click', '.btnRemoveArtist', function () {
+                var artistId = $(this).closest('li').data('artistid');
+                removeArtist(artistId);
+            });
+
+            function getArtists() {
+                $.ajax({
+                    url: '@Url.Action("GetArtists", "Management")',
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Парсим JSON-ответ
+                        var artists = JSON.parse(response);
+
+                        // Очищаем текущие элементы в списке
+                        $('#selectArtists').empty();
+
+                        // Добавляем каждого артиста в выпадающий список
+                        artists.forEach(function (artist) {
+                            $('#selectArtists').append(
+                                $('<option>', {
+                                    value: artist.Id,
+                                    text: artist.Name
+                                })
+                            );
+                        });
+                    },
+                    error: function (jqXHR, statusText, error) {
+                        console.log(jqXHR.status + '\n' + statusText + '\n' + error);
+                    }
+                });
+            }
+
+            // Вызываем метод для получения артистов при загрузке страницы
+            getArtists();
+
+
+            // ALBUMS
+            // Function to add album to the list
+            function addAlbum(albumId, albumName) {
+                // Check if album is already added
+                var existingAlbum = Albums.find(a => a.Id === albumId);
+                if (!existingAlbum) {
+                    // Add album to the list
+                    Albums.push({ Id: albumId, Name: albumName });
+                    // Update the list displayed on the UI
+                    $('#albumList').append(`<li class="list-group-item" data-albumid="${albumId}">${albumName}<button type="button" class="btn btn-danger btn-sm float-end btnRemoveAlbum">Remove</button></li>`);
+                }
+            }
+
+            // Function to remove album from the list
+            function removeAlbum(albumId) {
+                // Find the index of the album in the list
+                var index = Albums.findIndex(a => +a.Id === albumId);
+                if (index !== -1) {
+                    // Remove album from the list
+                    Albums.splice(index, 1);
+                    // Update the list displayed on the UI
+                    $('#albumList').find(`li[data-albumid="${albumId}"]`).remove();
+                }
+            }
+
+            // Event handler for adding album
+            $('#btnAddAlbum').click(function () {
+                var selectedOption = $('#selectAlbums option:selected');
+                var albumId = selectedOption.val();
+                var albumName = selectedOption.text();
+                if (albumId && albumName) {
+                    addAlbum(albumId, albumName);
+                }
+            });
+
+            // Event handler for removing album
+            $(document).on('click', '.btnRemoveAlbum', function () {
+                var albumId = $(this).closest('li').data('albumid');
+                removeAlbum(albumId);
+            });
+
+            function getAlbums() {
+                $.ajax({
+                    url: '@Url.Action("GetAlbums", "Management")',
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Парсим JSON-ответ
+                        var albums = JSON.parse(response);
+
+                        // Очищаем текущие элементы в списке
+                        $('#selectAlbums').empty();
+
+                        // Добавляем каждый альбом в выпадающий список
+                        albums.forEach(function (album) {
+                            $('#selectAlbums').append(
+                                $('<option>', {
+                                    value: album.Id,
+                                    text: album.Title
+                                })
+                            );
+                        });
+                    },
+                    error: function (jqXHR, statusText, error) {
+                        console.log(jqXHR.status + '\n' + statusText + '\n' + error);
+                    }
+                });
+            }
+
+            // Вызываем метод для получения альбомов при загрузке страницы
+            getAlbums();
+
+
+            // POSTER
+            // Функция для обновления предварительного просмотра постера
+            function updatePosterPreview() {
+                var posterUrl = $('#poster').val(); // Получаем URL постера из поля ввода
+                $('#posterPreview').attr('src', posterUrl); // Устанавливаем атрибут src для элемента предварительного просмотра
+            }
+
+            // Вызываем функцию обновления предварительного просмотра при изменении значения в поле ввода для постера
+            $('#poster').on('input', function () {
+                updatePosterPreview(); // Вызываем функцию обновления предварительного просмотра
+            });
+
+            // Функция для очистки значения в поле ввода "Poster"
+            $('#clearPoster').click(function () {
+                $('#poster').val(''); // Очищаем значение в поле ввода "Poster"
+            });
+
+            // Вызываем функцию обновления предварительного просмотра при загрузке страницы
+            updatePosterPreview();
+
+
+            // --------------------------------------------------------
+            //                              SAVE
+            // --------------------------------------------------------
+            function generateFileName() {
+                var title = $('#title').val().toLowerCase().replace(/\s/g, '_'); // Заменяем пробельные символы на _
+                var artistNames = [];
+                $('#artistList li').each(function () {
+                    artistNames.push($(this).find('span').text().trim().toLowerCase());
+                });
+                var fileName = artistNames.join('__'); // Разделяем имена артистов между собой двумя подчеркиваниями
+                if (fileName && title) {
+                    fileName += '__' + title; // Добавляем название песни после имен артистов
+                }
+                fileName = fileName.replace(/\s/g, '_'); // Заменяем пробельные символы в имени файла на _
+                return fileName + '.mp3';
+            }
+            function getAudioDuration(file) {
+                return new Promise((resolve, reject) => {
+                    // Создаем временный аудио элемент
+                    var audio = new Audio();
+
+                    // Обработчик события загрузки метаданных
+                    audio.onloadedmetadata = function () {
+                        // Получаем длительность файла в секундах
+                        var duration = audio.duration;
+
+                        // Отключаем аудио и удаляем его из DOM
+                        audio.pause();
+                        audio.remove();
+
+                        // Разрешаем обещание с длительностью файла
+                        resolve(duration);
+                    };
+
+                    // Обработчик события ошибки загрузки файла
+                    audio.onerror = function () {
+                        // В случае ошибки загрузки файла, отклоняем обещание с ошибкой
+                        reject(new Error('Failed to load audio file.'));
+                    };
+
+                    // Устанавливаем источник аудиофайла
+                    audio.src = URL.createObjectURL(file);
+
+                    // Запускаем загрузку аудиофайла
+                    audio.load();
+                });
+            }
+
+            // SAVE SONG ON DB
+            function SaveSongDb() {
+                // Собираем информацию о песне
+
+                var fileInput = document.getElementById('fileMusic');
+                var file = fileInput.files[0];
+                // Вызываем функцию getAudioDuration и обрабатываем результат
+                getAudioDuration(file).then(duration => {
+                    console.log('Duration:', duration, 'seconds');
+                    var fileName = generateFileName();
+
+                    var songData = {
+                        title: $('#title').val(),
+                        poster: $('#poster').val(),
+                        filePath: fileName,
+                        artistIds: [],
+                        albumIds: [],
+                        duration: duration,
+                    };
+
+                    // Получаем ID выбранных артистов
+                    $('#artistList li').each(function () {
+                        var artistId = $(this).attr('data-artistid');
+                        songData.artistIds.push(artistId);
+                    });
+
+                    // Получаем ID выбранных альбомов albumList
+                    $('#albumList li').each(function () {
+                        var albumId = $(this).attr('data-albumid');
+                        songData.albumIds.push(albumId);
+                    });
+
+                    // Отправляем данные на сервер
+                    $.ajax({
+                        url: '/Management/SaveSongDb',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(songData),
+                        success: function (response) {
+                            console.log('File saved on DB successfully');
+                            alert("File saved successfully");
+                            getSongs();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error saving file:', textStatus, errorThrown);
+                        }
+                    });
+
+                }).catch(error => {
+                    console.error('Error:', error.message);
+                });
+            }
+            // ON CLICK SAVE
+            $('#btn-insert-song').on('click', function () {
+                var fileName = generateFileName();
+
+                // Получаем файл из input[type=file]
+                var file = $('#fileMusic')[0].files[0];
+
+                // Создаем объект FormData и добавляем в него файл
+                var formData = new FormData();
+                formData.append('file', file);
+
+                // Добавляем также имя файла в FormData
+                formData.append('fileName', fileName);
+
+                // Отправляем AJAX-запрос на сервер для сохранения файла
+                $.ajax({
+                    url: '/Management/SaveSong',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log('File saved successfully');
+                        SaveSongDb();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Обработка ошибки
+                        console.log('Error saving file:', textStatus, errorThrown);
+                        alert("Error saving file")
+                    }
+                });
+            });
+
+
+
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

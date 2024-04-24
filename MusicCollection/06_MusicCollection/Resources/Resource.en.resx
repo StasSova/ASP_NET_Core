@@ -132,6 +132,12 @@
   <data name="Album" xml:space="preserve">
     <value>Album</value>
   </data>
+  <data name="AlbumLink" xml:space="preserve">
+    <value>Albums</value>
+  </data>
+  <data name="ArtistLink" xml:space="preserve">
+    <value>Artists</value>
+  </data>
   <data name="ChooseLang" xml:space="preserve">
     <value>Choose the Language</value>
   </data>
@@ -194,6 +200,9 @@
   </data>
   <data name="ManagementLink" xml:space="preserve">
     <value>Management</value>
+  </data>
+  <data name="MusicsLink" xml:space="preserve">
+    <value>Musics</value>
   </data>
   <data name="Playlist" xml:space="preserve">
     <value>Playlist</value>

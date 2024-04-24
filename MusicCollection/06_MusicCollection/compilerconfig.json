@@ -18,5 +18,13 @@
   {
     "outputFile": "wwwroot/css/Home/profile.css",
     "inputFile": "wwwroot/css/Home/profile.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/Managment/layout.css",
+    "inputFile": "wwwroot/css/Managment/layout.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/Managment/musics.css",
+    "inputFile": "wwwroot/css/Managment/musics.scss"
   }
 ]

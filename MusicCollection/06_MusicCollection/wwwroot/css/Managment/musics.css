@@ -1,0 +1,11 @@
+﻿#song-list .poster-img {
+  width: 100%;
+  max-width: 50px;
+  background-size: cover;
+}
+
+.img-fluid {
+  max-height: 300px;
+  max-width: 100%;
+  background-size: cover;
+}

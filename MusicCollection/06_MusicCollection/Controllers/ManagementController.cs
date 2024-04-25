@@ -43,9 +43,9 @@ namespace _06_MusicCollection.Controllers
             string response = JsonConvert.SerializeObject(song);
             return Json(response);
         }
-        public async Task<IActionResult> GetSongById(int id)
+        public async Task<IActionResult> GetSongById(int Id)
         {
-            var song = await _musicService.GetSongById(id);
+            var song = await _musicService.GetSongById(Id);
             if (song == null)
             {
                 return NotFound();
@@ -58,15 +58,37 @@ namespace _06_MusicCollection.Controllers
 
             return Json("Success");
         }
-        public async Task<IActionResult> UpdateSong()
+        public async Task<IActionResult> UpdateSong([FromBody] VM_SongData songData)
         {
+            try
+            {
+                // Создаем экземпляр песни
+                T_Song song = new T_Song
+                {
+                    Title = songData.Title,
+                    Poster = songData.Poster,
+                    DataUpdate = DateOnly.FromDateTime(DateTime.Now),
+                };
+                await _musicService.UpdateSong(songData.Id, song, songData.ArtistIds, songData.AlbumIds);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
 
-            return Json("Success");
         }
-        public async Task<IActionResult> RemoveSong()
+        public async Task<IActionResult> RemoveSong(int id)
         {
-
-            return Json("Success");
+            try
+            {
+                await _musicService.DeleteSongById(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPost]

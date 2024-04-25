@@ -119,6 +119,7 @@
                             <td>Downloads</td>
                             <td>Albums</td>
                             <td>Artists</td>
+                            <td>Action</td>
                         </tr>
                     </thead>
                     <tbody id="song-list">
@@ -168,6 +169,9 @@
                 artistsHtml += "</td>";
                 rowHtml += artistsHtml;
 
+                // Add button for getting song
+                rowHtml += "<td><button type='button' class='btn btn-primary btnGetSong' data-songid='" + song.Id + "'>Get Song</button></td>";
+
                 // Close the row tag
                 rowHtml += "</tr>";
 
@@ -204,13 +208,18 @@
             // Function to add artist to the list
             function addArtist(artistId, artistName) {
                 // Check if artist is already added
-                var existingArtist = Artists.find(a => a.Id === artistId);
+                console.log("------------------")
+                console.log(artistId);
+                console.log(Artists);
+                var existingArtist = Artists.find(a => +a.Id === +artistId);
                 if (!existingArtist) {
                     // Add artist to the list
-                    Artists.push({ Id: artistId, Name: artistName });
+                    Artists.push({ Id: +artistId, Name: artistName });
                     // Update the list displayed on the UI
                     $('#artistList').append(`<li class="list-group-item" data-artistid="${artistId}"><span>${artistName}</span><button type="button" class="btn btn-danger btn-sm float-end btnRemoveArtist">Remove</button></li>`);
                 }
+                console.log(artistId);
+                console.log(Artists);
             }
             // Function to remove artist from the list
             function removeArtist(artistId) {
@@ -276,10 +285,10 @@
             // Function to add album to the list
             function addAlbum(albumId, albumName) {
                 // Check if album is already added
-                var existingAlbum = Albums.find(a => a.Id === albumId);
+                var existingAlbum = Albums.find(a => +a.Id === +albumId);
                 if (!existingAlbum) {
                     // Add album to the list
-                    Albums.push({ Id: albumId, Name: albumName });
+                    Albums.push({ Id: +albumId, Name: albumName });
                     // Update the list displayed on the UI
                     $('#albumList').append(`<li class="list-group-item" data-albumid="${albumId}">${albumName}<button type="button" class="btn btn-danger btn-sm float-end btnRemoveAlbum">Remove</button></li>`);
                 }
@@ -417,7 +426,6 @@
             // SAVE SONG ON DB
             function SaveSongDb() {
                 // Собираем информацию о песне
-
                 var fileInput = document.getElementById('fileMusic');
                 var file = fileInput.files[0];
                 // Вызываем функцию getAudioDuration и обрабатываем результат
@@ -499,6 +507,141 @@
                 });
             });
 
+
+            // --------------------------------------------------------
+            //                              UPDATE
+            // --------------------------------------------------------
+
+            // Функция для очистки списков выбранных артистов и альбомов
+            function clearSelectedArtistsAndAlbums() {
+                $('#artistList').empty();
+                $('#albumList').empty();
+                Albums = [];
+                Artists = [];
+            }
+
+
+            // Функция для получения песни по ее идентификатору
+            function getSongById(songId) {
+                $.ajax({
+                    url: '@Url.Action("GetSongById", "Management")' + '/' + songId,
+                    type: "GET",
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // Обработка успешного ответа
+                        var song = JSON.parse(response);
+                        console.log(song);
+                        // Очищаем текущие элементы в списке артистов и альбомов
+                        clearSelectedArtistsAndAlbums();
+
+                        // Добавляем артистов в коллекцию Artists
+                        if (song.Artists && song.Artists.length > 0) {
+                            song.Artists.forEach(function (artist) {
+                                addArtist(artist.Id, artist.Name);
+                            });
+                        }
+
+                        // Добавляем альбомы в коллекцию Albums
+                        if (song.Album) {
+                            addAlbum(song.Album.Id, song.Album.Title);
+                        }
+
+
+                        $('#poster').val(song.Poster);
+                        updatePosterPreview();
+
+                        $('#title').val(song.Title);
+
+                        $('#hdn-song-id').val(song.Id);
+                    },
+                    error: function (jqXHR, statusText, error) {
+                        console.log(jqXHR.status + '\n' + statusText + '\n' + error);
+                    }
+                });
+            }
+
+            // Обработчик события клика по кнопке GetSong
+            $(document).on('click', '.btnGetSong', function () {
+                var songId = $(this).data('songid');
+                getSongById(songId);
+            });
+
+            // ON CLICK UPDATE
+            $('#btn-update-song').on('click', function () {
+
+                let id = +$("#hdn-song-id").val();
+                if (!id) {
+                    alert("Please select a song to update");
+                    return;
+                }
+
+                var songData = {
+                    Id: id,
+                    title: $('#title').val(),
+                    poster: $('#poster').val(),
+                    artistIds: [],
+                    albumIds: [],
+                };
+                // Получаем ID выбранных артистов
+                $('#artistList li').each(function () {
+                    var artistId = $(this).attr('data-artistid');
+                    songData.artistIds.push(artistId);
+                });
+                // Получаем ID выбранных альбомов albumList
+                $('#albumList li').each(function () {
+                    var albumId = $(this).attr('data-albumid');
+                    songData.albumIds.push(albumId);
+                });
+
+                // Отправляем данные на сервер
+                $.ajax({
+                    url: '/Management/UpdateSong',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(songData),
+                    success: function (response) {
+                        console.log('File saved on DB successfully');
+                        alert("File saved successfully");
+                        getSongs();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error saving file:', textStatus, errorThrown);
+                    }
+                });
+
+            });
+
+
+            // --------------------------------------------------------
+            //                              DELETE
+            // --------------------------------------------------------
+            // ON CLICK UPDATE
+            $('#btn-delete-song').on('click', function () {
+
+                let id = +$("#hdn-song-id").val();
+                if (!id) {
+                    alert("Please select a song to update");
+                    return;
+                }
+
+                // Отправляем данные на сервер
+                $.ajax({
+                    url: '@Url.Action("RemoveSong", "Management")' + '/' + id,
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log('File removed on DB successfully');
+                        alert("File removed successfully");
+                        getSongs();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error saving file:', textStatus, errorThrown);
+                    }
+                });
+
+            });
 
 
         });

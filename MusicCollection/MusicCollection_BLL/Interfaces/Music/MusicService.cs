@@ -139,6 +139,65 @@ namespace MusicCollection_BLL.Interfaces.Music
 
             }
         }
+        public async Task UpdateSong(int id, T_Song song, ICollection<int> artists, ICollection<int> albums)
+        {
+            try
+            {
+
+                M_Song db = await _dbContext.Generic.GetFirstAsync<M_Song, int>("Id", id);
+                db.Title = song.Title;
+                db.Poster = song.Poster;
+                db.UploadDate = song.UploadDate;
+                db.Artists = new List<M_Artist>();
+
+                // Устанавливаем альбом
+                if (albums != null && albums.Any())
+                {
+                    db.AlbumId = albums.First();
+                }
+
+                // Добавляем существующих артистов к песне
+                if (artists != null && artists.Any())
+                {
+                    foreach (var artistId in artists)
+                    {
+                        // Получаем сущность артиста по Id из базы данных
+                        var existingArtist = await _dbContext.Generic.GetFirstAsync<M_Artist, int>("Id", artistId);
+                        if (existingArtist != null)
+                        {
+                            // Добавляем артиста к песне
+                            db.Artists ??= new List<M_Artist>();
+                            db.Artists?.Add(existingArtist);
+                        }
+                    }
+                }
+                // добавляем альбомам песню
+                foreach (var albumId in albums)
+                {
+                    var album = await _dbContext.Generic.GetFirstAsync<M_Album, int>("Id", albumId);
+                    if (album != null)
+                    {
+                        // Проверяем, существует ли песня в альбоме
+                        if (!album.Songs.Any(x => x.Id == db.Id))
+                        {
+                            album.Songs.Add(db);
+                        }
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync();
+            }
+            catch { }
+        }
+
+        public async Task DeleteSongById(int id)
+        {
+            try
+            {
+                await _dbContext.Generic.Delete<M_Song>(id);
+            }
+            catch { }
+        }
 
         // ARTISTS
         public async Task<ICollection<T_Artist>> GetArtists()

@@ -12,7 +12,6 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 
 // ��������� �������� ApplicationContext � �������� ������� � ����������
 builder.Services.AddDbContext<MusicContext>(options => options.UseSqlServer(connection));
-builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGeneric, GenericRepository>();
 
@@ -30,6 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 

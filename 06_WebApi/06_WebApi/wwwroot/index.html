@@ -1,0 +1,520 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список артистов</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Список артистов</h2>
+            <form name="artistForm">
+                <input type="hidden" name="Id" value="0" />
+                <div class="form-group col-md-5">
+                    <label for="name">Имя:</label>
+                    <input class="form-control" name="name" />
+                </div>
+                <!--ACTION-->
+                <div class="panel-body">
+                    <a id="submit" class="btn btn-primary">Сохранить</a>
+                    <a id="reset" class="btn btn-primary">Сбросить</a>
+                </div>
+            </form>
+            <table id="artistTable" class="table table-condensed table-striped col-md-6">
+                <thead><tr><th>Id</th><th>Имя</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h2>Информация о пользователе</h2>
+            <form name="userForm">
+                <input type="hidden" name="UserId" value="0" />
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input class="form-control" name="email" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" class="form-control" name="password" />
+                </div>
+                <div class="panel-body">
+                    <a id="submitUser" class="btn btn-primary">Сохранить пользователя</a>
+                    <a id="resetUser" class="btn btn-primary">Сбросить</a>
+                </div>
+            </form>
+            <table id="userTable" class="table table-condensed table-striped col-md-6">
+                <thead><tr><th>Id</th><th>Имя</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h2>Форма для жанра</h2>
+            <form name="genreForm">
+                <input type="hidden" name="GenreId" value="0" />
+                <div class="form-group">
+                    <label for="name">Название:</label>
+                    <input class="form-control" name="name" />
+                </div>
+                <div class="form-group">
+                    <label for="poster">URL постера:</label>
+                    <input class="form-control" name="poster" />
+                </div>
+                <div class="form-group">
+                    <label for="backgroundColor">Цвет фона:</label>
+                    <input class="form-control" name="backgroundColor" />
+                </div>
+                <div class="panel-body">
+                    <a id="submitGenre" class="btn btn-primary">Сохранить жанр</a>
+                    <a id="resetGenre" class="btn btn-primary">Сбросить</a>
+                </div>
+            </form>
+            <div class="col-md-6">
+                <h2>Таблица с жанрами</h2>
+                <table id="genreTable" class="table table-condensed table-striped col-md-6">
+                    <thead><tr><th>Id</th><th>Название</th><th>Постер</th><th>Цвет фона</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        GetArtists();
+        function GetArtists() {
+            $.ajax({
+                url: "https://localhost:7123/api/Artist",
+                method: "GET",
+                contentType: "application/json",
+                success: function (artists) {
+                    console.log(artists);
+                    let rows = "";
+                    $.each(artists, function (index, art) {
+                        rows += row(art);
+                    })
+                    $("#artistTable tbody").append(rows);
+                }
+            });
+        }
+        // создание строки для таблицы
+        let row = function (artist) {
+            return "<tr data-rowid='" + artist.id + "'><td>" + artist.id + "</td>" +
+                "<td>" + artist.name + "</td> <td>" +
+                "<td><a class='editLink' data-id='" + artist.id + "'>Изменить</a> | " +
+                "<a class='removeLink' data-id='" + artist.id + "'>Удалить</a></td></tr>";
+        };
+        // нажимаем на ссылку Изменить
+        $("body").on("click", ".editLink", function () {
+            let id = $(this).data("id");
+            console.log("edit click", id);
+            GetArtist(id);
+        });
+        // нажимаем на ссылку Удалить
+        $("body").on("click", ".removeLink", function () {
+            let id = $(this).data("id");
+            DeleteArtist(id);
+        });
+        // Получение одного студента
+        function GetArtist(id) {
+            console.log(id);
+            $.ajax({
+                url: 'https://localhost:7123/api/Artist/' + id,
+                method: 'GET',
+                contentType: "application/json",
+                success: function (artist) {
+                    let form = document.forms["artistForm"];
+                    form.elements["Id"].value = artist.id;
+                    form.elements["name"].value = artist.name;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            });
+        }
+        // Удаление студента
+        function DeleteArtist(id) {
+            if (!confirm("Вы действительно желаете удалить артиста?"))
+                return;
+            $.ajax({
+                url: "https://localhost:7123/api/Artist/" + id,
+                contentType: "application/json",
+                method: "DELETE",
+                success: function () {
+                    $("#artistTable tbody").find("tr[data-rowid='" + id + "']").remove();
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+        // сброс значений формы
+        $("#reset").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["artistForm"];
+            form.reset();
+            form.elements["Id"].value = 0;
+        });
+        // отправка формы
+        $("#submit").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["artistForm"];
+            let id = form.elements["Id"].value;
+            let name = form.elements["name"].value;
+            if (id == 0)
+                CreateArtist(name);
+            else
+                EditArtist(id, name);
+        });
+        // Добавление студента
+        function CreateArtist(artistName) {
+            $.ajax({
+                url: "https://localhost:7123/api/Artist",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    name: artistName,
+                }),
+                success: function (artist) {
+                    $("#artistTable").append(row(artist));
+                    let form = document.forms["artistForm"];
+                    form.reset();
+                    form.elements["Id"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+        // Изменение студента
+        function EditArtist(artistId, artistName) {
+            let request = JSON.stringify({
+                id: artistId,
+                name: artistName,
+            });
+            $.ajax({
+                url: "https://localhost:7123/api/Artist/" + artistId,
+                contentType: "application/json",
+                method: "PUT",
+                data: request,
+                success: function (artist) {
+                    $("#artistTable tbody").find("tr[data-rowid='" + artistId + "']").replaceWith(row(artist));
+                    let form = document.forms["artistForm"];
+                    form.reset();
+                    form.elements["Id"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+    </script>
+
+    <script>
+        // Получение списка пользователей
+        function GetUsers() {
+            $.ajax({
+                url: "https://localhost:7123/api/User",
+                method: "GET",
+                contentType: "application/json",
+                success: function (users) {
+                    console.log(users);
+                    let rows = "";
+                    $.each(users, function (index, user) {
+                        rows += userRow(user);
+                    })
+                    $("#userTable tbody").append(rows);
+                }
+            });
+        }
+
+        // Создание строки для таблицы с информацией о пользователе
+        let userRow = function (user) {
+            return "<tr data-rowid='" + user.id + "'><td>" + user.id + "</td>" +
+                "<td>" + user.email + "</td>" +
+                "<td>" +
+                "<a class='editUserLink' data-id='" + user.id + "'>Изменить</a> | " +
+                "<a class='removeUserLink' data-id='" + user.id + "'>Удалить</a>" +
+                "</td></tr>";
+        };
+
+        // Нажатие на ссылку "Изменить" для пользователя
+        $("body").on("click", ".editUserLink", function () {
+            let id = $(this).data("id");
+            console.log("edit user click", id);
+            GetUser(id);
+        });
+
+        // Нажатие на ссылку "Удалить" для пользователя
+        $("body").on("click", ".removeUserLink", function () {
+            let id = $(this).data("id");
+            DeleteUser(id);
+        });
+
+        // Получение данных о пользователе по ID
+        function GetUser(id) {
+            console.log(id);
+            $.ajax({
+                url: 'https://localhost:7123/api/User/' + id,
+                method: 'GET',
+                contentType: "application/json",
+                success: function (user) {
+                    let form = document.forms["userForm"];
+                    form.elements["UserId"].value = user.id;
+                    form.elements["email"].value = user.email;
+                    form.elements["password"].value = user.password;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            });
+        }
+
+        // Удаление пользователя
+        function DeleteUser(id) {
+            if (!confirm("Вы действительно желаете удалить пользователя?"))
+                return;
+            $.ajax({
+                url: "https://localhost:7123/api/User/" + id,
+                contentType: "application/json",
+                method: "DELETE",
+                success: function () {
+                    $("#userTable tbody").find("tr[data-rowid='" + id + "']").remove();
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        // Сброс значений формы пользователя
+        $("#resetUser").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["userForm"];
+            form.reset();
+            form.elements["UserId"].value = 0;
+        });
+
+        // Отправка формы пользователя
+        $("#submitUser").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["userForm"];
+            let id = form.elements["UserId"].value;
+            let email = form.elements["email"].value;
+            let password = form.elements["password"].value;
+            if (id == 0)
+                CreateUser(email, password);
+            else
+                EditUser(id, email, password);
+        });
+
+        // Создание нового пользователя
+        function CreateUser(email, password) {
+            console.log(email, password);
+            $.ajax({
+                url: "https://localhost:7123/api/User",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    email: email,
+                    password: password,
+                    salt: "testSalt"
+                }),
+                success: function (user) {
+                    console.log(user);
+                    $("#userTable tbody").append(userRow(user));
+                    let form = document.forms["userForm"];
+                    form.reset();
+                    form.elements["UserId"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        // Редактирование пользователя
+        function EditUser(userId, email, password) {
+            let request = JSON.stringify({
+                id: userId,
+                email: email,
+                password: password,
+                salt: "testSalt"
+            });
+            console.log(request);
+            $.ajax({
+                url: "https://localhost:7123/api/User/" + userId,
+                contentType: "application/json",
+                method: "PUT",
+                data: request,
+                success: function (user) {
+                    console.log(user);
+                    $("#userTable tbody").find("tr[data-rowid='" + userId + "']").replaceWith(userRow(user));
+                    let form = document.forms["userForm"];
+                    form.reset();
+                    form.elements["UserId"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        GetUsers();
+    </script>
+
+    <script>
+        // Получение списка жанров
+        function GetGenres() {
+            $.ajax({
+                url: "https://localhost:7123/api/Genre",
+                method: "GET",
+                contentType: "application/json",
+                success: function (genres) {
+                    console.log(genres);
+                    let rows = "";
+                    $.each(genres, function (index, genre) {
+                        rows += genreRow(genre);
+                    })
+                    $("#genreTable tbody").append(rows);
+                }
+            });
+        }
+
+        // Создание строки для таблицы с информацией о жанре
+        let genreRow = function (genre) {
+            return "<tr data-rowid='" + genre.id + "'><td>" + genre.id + "</td>" +
+                "<td>" + genre.name + "</td>" +
+                "<td><img src='" + genre.poster + "' alt='Постер' style='width: 50px; height: auto;'></td>" +
+                "<td style='background-color:" + genre.backgroundColor + ";'></td>" +
+                "<td>" +
+                "<a class='editGenreLink' data-id='" + genre.id + "'>Изменить</a> | " +
+                "<a class='removeGenreLink' data-id='" + genre.id + "'>Удалить</a>" +
+                "</td></tr>";
+        };
+
+        // Нажатие на ссылку "Изменить" для жанра
+        $("body").on("click", ".editGenreLink", function () {
+            let id = $(this).data("id");
+            console.log("edit genre click", id);
+            GetGenre(id);
+        });
+
+        // Нажатие на ссылку "Удалить" для жанра
+        $("body").on("click", ".removeGenreLink", function () {
+            let id = $(this).data("id");
+            DeleteGenre(id);
+        });
+
+        // Получение данных о жанре по ID
+        function GetGenre(id) {
+            console.log(id);
+            $.ajax({
+                url: 'https://localhost:7123/api/Genre/' + id,
+                method: 'GET',
+                contentType: "application/json",
+                success: function (genre) {
+                    let form = document.forms["genreForm"];
+                    form.elements["GenreId"].value = genre.id;
+                    form.elements["name"].value = genre.name;
+                    form.elements["poster"].value = genre.poster;
+                    form.elements["backgroundColor"].value = genre.backgroundColor;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            });
+        }
+
+        // Удаление жанра
+        function DeleteGenre(id) {
+            if (!confirm("Вы действительно желаете удалить жанр?"))
+                return;
+            $.ajax({
+                url: "https://localhost:7123/api/Genre/" + id,
+                contentType: "application/json",
+                method: "DELETE",
+                success: function () {
+                    $("#genreTable tbody").find("tr[data-rowid='" + id + "']").remove();
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        // Сброс значений формы жанра
+        $("#resetGenre").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["genreForm"];
+            form.reset();
+            form.elements["GenreId"].value = 0;
+        });
+
+        // Отправка формы жанра
+        $("#submitGenre").click(function (e) {
+            e.preventDefault();
+            let form = document.forms["genreForm"];
+            let id = form.elements["GenreId"].value;
+            let name = form.elements["name"].value;
+            let poster = form.elements["poster"].value;
+            let backgroundColor = form.elements["backgroundColor"].value;
+            if (id == 0)
+                CreateGenre(name, poster, backgroundColor);
+            else
+                EditGenre(id, name, poster, backgroundColor);
+        });
+
+        // Создание нового жанра
+        function CreateGenre(name, poster, backgroundColor) {
+            $.ajax({
+                url: "https://localhost:7123/api/Genre",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    name: name,
+                    poster: poster,
+                    backgroundColor: backgroundColor
+                }),
+                success: function (genre) {
+                    $("#genreTable tbody").append(genreRow(genre));
+                    let form = document.forms["genreForm"];
+                    form.reset();
+                    form.elements["GenreId"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        // Редактирование жанра
+        function EditGenre(genreId, name, poster, backgroundColor) {
+            let request = JSON.stringify({
+                id: genreId,
+                name: name,
+                poster: poster,
+                backgroundColor: backgroundColor
+            });
+            $.ajax({
+                url: "https://localhost:7123/api/Genre/" + genreId,
+                contentType: "application/json",
+                method: "PUT",
+                data: request,
+                success: function (genre) {
+                    $("#genreTable tbody").find("tr[data-rowid='" + genreId + "']").replaceWith(genreRow(genre));
+                    let form = document.forms["genreForm"];
+                    form.reset();
+                    form.elements["GenreId"].value = 0;
+                },
+                error: function (jqXHR, exception) {
+                    console.log(jqXHR.status + '\n' + exception);
+                }
+            })
+        }
+
+        GetGenres();
+    </script>
+
+</body>
+</html>

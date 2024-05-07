@@ -56,6 +56,7 @@ namespace _06_WebApi.Controllers
             try
             {
                 await _api.Update<M_Artist>(id, m_Artist);
+                return Ok(m_Artist);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -68,8 +69,6 @@ namespace _06_WebApi.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/Artist

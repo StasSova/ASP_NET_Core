@@ -4,10 +4,9 @@ using _06_WebApi.Controllers;
 using _06_WebApi.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddCors(); // добавляем сервисы CORS
 // Add services to the container.
 
-// �������� ������ ����������� �� ����� ������������
 string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // ��������� �������� ApplicationContext � �������� ������� � ����������
@@ -20,6 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors(builder => builder.WithOrigins("https://localhost:7100").AllowAnyHeader().AllowAnyMethod());
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

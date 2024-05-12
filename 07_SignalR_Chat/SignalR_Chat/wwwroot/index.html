@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            color: #212529;
+            text-align: center;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .list-group {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 0;
+        }
+
+        .list-group-item {
+            position: relative;
+            display: block;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: -1px;
+            background-color: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+            .list-group-item:first-child {
+                border-top-left-radius: 0.25rem;
+                border-top-right-radius: 0.25rem;
+            }
+
+            .list-group-item:last-child {
+                margin-bottom: 0;
+                border-bottom-right-radius: 0.25rem;
+                border-bottom-left-radius: 0.25rem;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-4">Чат-комната</h2>
+        <div class="main">
+            <div id="loginBlock" class="mt-4">
+                <label for="txtUserName">Введите логин:</label>
+                <input id="txtUserName" type="text" class="form-control" />
+                <input id="btnLogin" type="button" value="Войти" class="btn btn-primary mt-2" />
+            </div>
+            <div id="chatBody" class="mt-4">
+                <div id="header"></div>
+                <div id="inputForm">
+                    <input type="text" id="message" class="form-control" />
+                    <input type="button" id="sendmessage" value="Отправить" class="btn btn-primary mt-2" />
+                </div>
+                <div id="chatroom" class="mt-4"></div>
+
+                <div class="mt-4">
+                    <p><b>Все пользователи:</b></p>
+                    <ul id="chatusers" class="list-group"></ul>
+                </div>
+            </div>
+            <input id="hdId" type="hidden" />
+            <input id="username" type="hidden" />
+        </div>
+    </div>
+    <script>
+        $(function () {
+            /*
+            Для взаимодействия с хабом ChatHub с помощью метода build() объекта HubConnectionBuilder
+            создается объект hubConnection - объект подключения.
+            Метод withUrl устанавливает адрес, по котору приложение будет обращаться к хабу.
+            Поскольку ChatHub на сервере сопоставляется с адресом "/chat", то именно этот адрес и передается в withUrl.
+            */
+            $('#chatBody').hide();
+            $('#loginBlock').show();
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/chat")
+                .build();
+            /*
+                Если адрес сервера и адрес клиента не будут совпадать, то потребуется настроить поддержку CORS.
+                В данном случае серверная и клиентская части работают в рамках одного приложения, поэтому настройка CORS не требуется.
+            */
+
+            // Метод hubConnection.on устанавливает функцию на стороне клиента,
+            // которая будет получать данные от сервера (хаба)
+            hubConnection.on("AddMessage", function (name, message) {
+                // Добавление сообщений на веб-страницу
+                $('#chatroom').append('<p><b>' + htmlEncode(name)
+                    + '</b>: <i>' + htmlEncode(message) + '</i></p>');
+            });
+
+            // Функция, вызываемая сервером при подключении нового пользователя
+            hubConnection.on("Connected", function (id, userName, allUsers, allMessages) {
+                console.log("Connetcted")
+                $('#loginBlock').hide();
+                $('#chatBody').show();
+                // установка в скрытых полях имени и id текущего пользователя
+                $('#hdId').val(id);
+                $('#username').val(userName);
+                $('#header').html('<h3>Welcome, ' + userName + '</h3>');
+
+                // Добавление всех пользователей
+                for (i = 0; i < allUsers.length; i++) {
+
+                    AddUser(allUsers[i].connectionId, allUsers[i].name);
+                }
+
+                for (i = 0; i < allMessages.length; i++) {
+                    AddMessage(allMessages[i].from, allMessages[i].text);
+                }
+            });
+
+            // Функция, вызываемая сервером для добавления нового пользователя
+            hubConnection.on("NewUserConnected", function (id, name) {
+
+                AddUser(id, name);
+            });
+
+            // Функция, вызываемая сервером для удаления пользователя
+            hubConnection.on("UserDisconnected", function (id, userName) {
+
+                $('#' + id).remove();
+            });
+
+
+            // Открываем соединение с сервером.
+            // Если подключение к хабу успешно установлено,
+            // то сработает метод then, чтобы выполнить некоторые действия.
+            // Если же в процессе подключения к серверу возникнет ошибка,
+            // то сработает функция, которая передается в метод catch и которая получит данные об ошибке.
+            hubConnection.start()
+                .then(function () {
+                    // отправка сообщения
+                    $('#sendmessage').click(function () {
+                        // Вызываем у хаба метод Send и передаем ему данные.
+                        // В случае, если при отправке возникнет ошибка,
+                        // то сработает функция, которая передается в метод catch().
+                        hubConnection.invoke("Send", $('#username').val(), $('#message').val())
+                            .catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        $('#message').val('');
+                    });
+
+                    // обработка логина
+                    $("#btnLogin").click(function () {
+                        console.log("Button Login Click")
+                        let name = $("#txtUserName").val();
+                        if (name.length > 0) {
+                            // Вызываем у хаба метод Connect и передаем ему данные.
+                            // В случае, если при отправке возникнет ошибка,
+                            // то сработает функция, которая передается в метод catch().
+                            hubConnection.invoke("Connect", name)
+                                .catch(function (err) {
+                                    return console.error(err.toString());
+                                });
+                        }
+                        else {
+                            alert("Введите имя");
+                        }
+                    });
+                })
+                .catch(function (err) {
+                    return console.error(err.toString());
+                });
+        });
+
+        // Кодирование тегов
+        function htmlEncode(value) {
+            let encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
+        //Добавление нового пользователя
+        function AddUser(id, name) {
+
+            let userId = $('#hdId').val();
+
+            if (name !== undefined && userId !== id) {
+
+                $("#chatusers").append('<li id="' + id + '"><b>' + name + '</b></li>');
+            }
+        }
+
+        function AddMessage(name, message) {
+            // Добавление сообщений на веб-страницу
+            $('#chatroom').append('<p><b>' + htmlEncode(name)
+                + '</b>: <i>' + htmlEncode(message) + '</i></p>');
+        }
+    </script>
+</body>
+</html>

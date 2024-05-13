@@ -1,0 +1,87 @@
+﻿@page
+@model _08_RazorPages_Movie_CRUD.Pages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Film</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Film.Id" />
+            <div class="form-group">
+                <label asp-for="Film.Name" class="control-label"></label>
+                <input asp-for="Film.Name" class="form-control" />
+                <span asp-validation-for="Film.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Film.Year" class="control-label"></label>
+                <input asp-for="Film.Year" class="form-control" />
+                <span asp-validation-for="Film.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Film.Director" class="control-label"></label>
+                <input asp-for="Film.Director" class="form-control" />
+                <span asp-validation-for="Film.Director" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Film.Genre" class="control-label"></label>
+                <input asp-for="Film.Genre" class="form-control" />
+                <span asp-validation-for="Film.Genre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="newUrl" class="control-label"></label>
+                <input asp-for="newUrl" type="file" class="form-control" id="ImageUrl" onchange="previewImage()" />
+                <span asp-validation-for="newUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Film.Description" class="control-label"></label>
+                <input asp-for="Film.Description" class="form-control" />
+                <span asp-validation-for="Film.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <img src="@Url.Content("~" + Model.Film.ImageUrl)" id="preview" alt="Preview" style="max-width: 100%; max-height: 100%;" />
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage() {
+            console.log("Image change");
+            var preview = document.getElementById('preview');
+            var fileInput = document.getElementById('ImageUrl');
+            var file = fileInput.files[0]; // Получаем выбранный файл из элемента input
+
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file); // Читаем файл и передаем его содержимое в формате Data URL
+            } else {
+                preview.src = ""; // Если файл не выбран, очищаем src атрибут изображения
+            }
+        }
+    </script>
+}

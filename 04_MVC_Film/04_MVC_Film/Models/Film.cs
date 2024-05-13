@@ -19,7 +19,6 @@ public class Film : DbEntity
     public int? GenreId { get; set; }
     public Genre? Genre { get; set; }
 
-
     public string? ImageUrl { get; set; }
 
     [Remote(action: "CheckDescription", controller: "Films", ErrorMessage = "Контролллер вернул ошибку")]

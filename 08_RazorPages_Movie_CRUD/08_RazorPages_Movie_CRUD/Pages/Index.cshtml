@@ -1,0 +1,30 @@
+﻿@page
+@model _08_RazorPages_Movie_CRUD.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Film List</h1>
+<a asp-page="Create">Create New</a>
+
+<div class="container">
+    @foreach (var film in Model.Film)
+    {
+        <div class="film-container">
+            <img class="film-image" src="@film.ImageUrl" alt="@film.Name" />
+            <div class="film-details">
+                <h2>@film.Name</h2>
+                <p><strong>Year:</strong> @film.Year</p>
+                <p><strong>Director:</strong> @film.Director</p>
+                <p><strong>Genre:</strong> @film.Genre</p>
+                <p>@film.Description</p>
+                <p>
+                    <a asp-page="./Edit" asp-route-id="@film.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@film.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@film.Id">Delete</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>

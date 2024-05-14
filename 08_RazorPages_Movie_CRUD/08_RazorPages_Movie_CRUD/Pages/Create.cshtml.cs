@@ -7,14 +7,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using _08_RazorPages_Movie_CRUD.Models;
 using Microsoft.Extensions.Hosting;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 
 namespace _08_RazorPages_Movie_CRUD.Pages
 {
     public class CreateModel : PageModel
     {
-        private readonly _08_RazorPages_Movie_CRUD.Models.FilmContext _context;
+        private readonly IRepository _context;
         private readonly IWebHostEnvironment _environment;
-        public CreateModel(_08_RazorPages_Movie_CRUD.Models.FilmContext context, IWebHostEnvironment environment)
+        public CreateModel(IRepository context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;
@@ -47,8 +48,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 await newUrl.CopyToAsync(fileStream);
             }
 
-            _context.Films.Add(Film);
-            await _context.SaveChangesAsync();
+            await _context.Add(Film);
 
             return RedirectToPage("./Index");
         }

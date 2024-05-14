@@ -8,15 +8,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _08_RazorPages_Movie_CRUD.Models;
 using Microsoft.Extensions.Hosting;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 
 namespace _08_RazorPages_Movie_CRUD.Pages
 {
     public class EditModel : PageModel
     {
-        private readonly _08_RazorPages_Movie_CRUD.Models.FilmContext _context;
+        private readonly IRepository _context;
         private readonly IWebHostEnvironment _environment;
 
-        public EditModel(_08_RazorPages_Movie_CRUD.Models.FilmContext context, IWebHostEnvironment environment)
+        public EditModel(IRepository context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;
@@ -35,7 +36,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 return NotFound();
             }
 
-            var film = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
+            var film = await _context.GetFilmById(id.Value);
             if (film == null)
             {
                 return NotFound();
@@ -55,7 +56,6 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 return Page();
             }
 
-            _context.Attach(Film).State = EntityState.Modified;
 
             try
             {
@@ -66,7 +66,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                     await newUrl.CopyToAsync(fileStream);
                 }
 
-                await _context.SaveChangesAsync();
+                await _context.Update(Film.Id, Film);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,7 +85,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
 
         private bool FilmExists(int id)
         {
-            return _context.Films.Any(e => e.Id == id);
+            return _context.GetFilmById(id) != null;
         }
     }
 }

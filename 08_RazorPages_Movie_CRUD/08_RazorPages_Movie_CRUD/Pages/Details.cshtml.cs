@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using _08_RazorPages_Movie_CRUD.Models;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 
 namespace _08_RazorPages_Movie_CRUD.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly _08_RazorPages_Movie_CRUD.Models.FilmContext _context;
+        private readonly IRepository _context;
 
-        public DetailsModel(_08_RazorPages_Movie_CRUD.Models.FilmContext context)
+        public DetailsModel(IRepository context)
         {
             _context = context;
         }
@@ -27,7 +28,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 return NotFound();
             }
 
-            var film = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
+            var film = await _context.GetFilmById(id.Value);
             if (film == null)
             {
                 return NotFound();

@@ -6,23 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using _08_RazorPages_Movie_CRUD.Models;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 
 namespace _08_RazorPages_Movie_CRUD.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly _08_RazorPages_Movie_CRUD.Models.FilmContext _context;
+        private readonly IRepository _context;
 
-        public IndexModel(_08_RazorPages_Movie_CRUD.Models.FilmContext context)
+        public IndexModel(IRepository context)
         {
             _context = context;
         }
 
-        public IList<Film> Film { get;set; } = default!;
+        public IList<Film> Film { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Film = await _context.Films.ToListAsync();
+            Film = (await _context.GetFilms()).ToList();
         }
     }
 }

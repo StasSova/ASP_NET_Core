@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using _08_RazorPages_Movie_CRUD.Models;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 
 namespace _08_RazorPages_Movie_CRUD.Pages
 {
     public class DeleteModel : PageModel
     {
-        private readonly _08_RazorPages_Movie_CRUD.Models.FilmContext _context;
+        private readonly IRepository _context;
 
-        public DeleteModel(_08_RazorPages_Movie_CRUD.Models.FilmContext context)
+        public DeleteModel(IRepository context)
         {
             _context = context;
         }
@@ -28,7 +29,7 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 return NotFound();
             }
 
-            var film = await _context.Films.FirstOrDefaultAsync(m => m.Id == id);
+            var film = await _context.GetFilmById(id.Value);
 
             if (film == null)
             {
@@ -48,12 +49,11 @@ namespace _08_RazorPages_Movie_CRUD.Pages
                 return NotFound();
             }
 
-            var film = await _context.Films.FindAsync(id);
+            var film = await _context.GetFilmById(id.Value);
             if (film != null)
             {
                 Film = film;
-                _context.Films.Remove(Film);
-                await _context.SaveChangesAsync();
+                await _context.Delete(film);
             }
 
             return RedirectToPage("./Index");

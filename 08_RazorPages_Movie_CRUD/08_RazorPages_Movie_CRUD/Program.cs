@@ -1,4 +1,5 @@
 using _08_RazorPages_Movie_CRUD.Models;
+using _08_RazorPages_Movie_CRUD.Models.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 
 // добавляем контекст ApplicationContext в качестве сервиса в приложение
 builder.Services.AddDbContext<FilmContext>(options => options.UseSqlServer(connection));
+
+builder.Services.AddScoped<IRepository, FilmRepository>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
